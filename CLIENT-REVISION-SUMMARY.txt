@@ -1,0 +1,40 @@
+VAPerforma client revision completed
+
+HOME
+- Current logo retained
+- Brand changed to VAPerforma
+- Logo and brand route to Why Us
+- Staff Login removed
+- Navigation: Home, Services, How It Works, Why Us, Get Started
+- Schedule a Discovery Call is clickable
+- Broad professional-services hero added
+- Old matching card removed
+- Old trust badges removed
+- Old staffing-perspective section removed
+- Service strip updated
+- Talent Matching copy updated
+- Final call-to-action updated
+
+SERVICES
+- Executive and Administrative Assistance
+- Medical Virtual Assistance
+- Social Media Management
+- Customer Support
+- Appointment Scheduling and Reception
+- Website Development
+- Video Editing
+- Legal Virtual Assistance
+- Data Entry and General Administrative Support
+
+GET STARTED
+- Client-only form
+- Applicant option removed
+- All nine services added to dropdown
+- Email submission route retained
+
+FOOTER
+- VAPerforma branding
+- Current logo retained
+- Company links updated
+- Applicant and staff links removed
+- Country-specific tagline removed

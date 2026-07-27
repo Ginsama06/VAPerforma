@@ -1,0 +1,6 @@
+VAPerforma Final Build
+Features:
+- Obvious 3D coin spin logo; pauses on hover
+- Six service categories
+- Client-only inquiry form
+- Email-ready API route

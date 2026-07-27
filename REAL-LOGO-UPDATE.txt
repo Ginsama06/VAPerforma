@@ -1,0 +1,10 @@
+VAPerforma real-logo update
+
+- Uploaded headset/checkmark logo added to the website
+- Temporary blue square icon removed
+- Real logo used in the header
+- Real logo used in the footer
+- Real logo used as the browser/app favicon
+- Logo uses a Beyblade-style 3D wobble spin
+- Logo pauses when hovered
+- VAPerforma text remains still
