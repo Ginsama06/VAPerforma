@@ -102,7 +102,7 @@ export default function SiteHeader() {
           })}
 
           <a href="#get-started" className="brand-button px-5 py-3">
-            Book a Session
+            Schedule a Discovery Call
           </a>
         </nav>
       </div>
@@ -130,7 +130,7 @@ export default function SiteHeader() {
               onClick={closeMenu}
               className="brand-button mt-2 text-center"
             >
-              Book a Session
+              Schedule a Discovery Call
             </a>
           </div>
         </nav>

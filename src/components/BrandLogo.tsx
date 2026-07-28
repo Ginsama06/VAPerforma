@@ -10,17 +10,20 @@ const configuration = {
   header: {
     mark: "default" as const,
     wordmark: "text-[0.9rem] sm:text-base",
-    gap: "gap-3"
+    gap: "gap-0",
+    offset: "-ml-2.5"
   },
   footer: {
     mark: "large" as const,
     wordmark: "text-base sm:text-lg",
-    gap: "gap-3.5"
+    gap: "gap-0",
+    offset: "-ml-3.5"
   },
   hero: {
     mark: "hero" as const,
     wordmark: "text-2xl sm:text-3xl lg:text-4xl",
-    gap: "gap-5"
+    gap: "gap-0",
+    offset: "-ml-7 sm:-ml-9"
   }
 };
 
@@ -40,13 +43,13 @@ export default function BrandLogo({
 
       <span
         aria-hidden="true"
-        className={`inline-flex items-center whitespace-nowrap font-black tracking-[0.2em] ${config.wordmark} ${
+        className={`inline-flex items-center whitespace-nowrap font-black tracking-[0.12em] ${config.wordmark} ${config.offset} ${
           light ? "text-white" : "text-[#092b30]"
         }`}
       >
         PERF
 
-        <span className="vaperforma-globe-scene mx-0.5">
+        <span className="vaperforma-globe-scene mx-[0.12em]">
           <span className="vaperforma-globe-spinner">
             <GlobeIcon className="h-[1.08em] w-[1.08em] text-[#2fc4c1]" />
           </span>

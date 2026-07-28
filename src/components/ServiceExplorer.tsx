@@ -91,10 +91,10 @@ export default function ServiceExplorer() {
                 href={`/?service=${encodeURIComponent(
                   service.slug
                 )}#get-started`}
-                aria-label={`Book a session for ${service.title}`}
+                aria-label={`Schedule a discovery call for ${service.title}`}
                 className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#159b98] px-4 py-3 text-center font-black text-white transition hover:-translate-y-0.5 hover:bg-[#0b7472] focus-visible:-translate-y-0.5"
               >
-                Book a Session
+                Discovery Call
                 <ArrowRightIcon className="h-5 w-5 shrink-0" />
               </a>
             </div>
@@ -207,7 +207,7 @@ export default function ServiceExplorer() {
                 )}#get-started`}
                 className="brand-button inline-flex items-center justify-center gap-2 px-6 py-3.5"
               >
-                Book This Service
+                Schedule a Discovery Call
                 <ArrowRightIcon className="h-5 w-5" />
               </a>
             </div>

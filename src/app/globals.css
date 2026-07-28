@@ -806,7 +806,7 @@ textarea.form-field {
   }
 }
 
-/* v9: stable equal Why VAPerforma cards */
+/* v12: equal Why VAPerforma cards with responsive dialog details */
 .why-stable-grid {
   grid-auto-rows: 1fr;
   align-items: stretch;
@@ -931,7 +931,7 @@ textarea.form-field {
 }
 
 .why-stable-action {
-  opacity: 0.82;
+  opacity: 0.84;
   transition:
     opacity 0.24s ease,
     gap 0.24s ease;
@@ -944,50 +944,28 @@ textarea.form-field {
   gap: 0.7rem;
 }
 
-/* One shared panel below the fixed 2x2 grid */
-.why-shared-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  margin-top: 0;
-  transform: translateY(-8px);
-  transition:
-    grid-template-rows 0.42s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 0.28s ease,
-    margin-top 0.3s ease,
-    transform 0.34s ease;
+.why-modal {
+  animation: why-modal-fade 0.2s ease both;
 }
 
-.why-shared-panel.is-open {
-  grid-template-rows: 1fr;
-  opacity: 1;
-  margin-top: 1.25rem;
-  transform: translateY(0);
+.why-modal-panel {
+  animation: why-sheet-up 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  overscroll-behavior: contain;
 }
 
-.why-shared-panel-clip {
-  min-height: 0;
-  overflow: hidden;
-}
-
-.why-shared-panel-content {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.6rem;
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.11),
-      rgba(47, 196, 193, 0.06)
-    );
-  padding: 1.5rem;
-  box-shadow: 0 22px 58px rgba(0, 0, 0, 0.15);
-  animation: why-shared-content-in 0.32s ease both;
-}
-
-@keyframes why-shared-content-in {
+@keyframes why-modal-fade {
   from {
     opacity: 0;
-    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes why-sheet-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
   }
   to {
     opacity: 1;
@@ -995,15 +973,30 @@ textarea.form-field {
   }
 }
 
-@media (min-width: 768px) {
-  .why-shared-panel-content {
-    padding: 1.75rem;
+@media (min-width: 640px) {
+  .why-modal-panel {
+    animation-name: why-modal-rise;
+  }
+
+  @keyframes why-modal-rise {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 }
 
 @media (max-width: 639px) {
   .why-stable-card {
     min-height: 15rem;
+  }
+
+  .why-modal-panel {
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
   }
 }
 
@@ -1013,12 +1006,65 @@ textarea.form-field {
   .why-stable-glow,
   .why-stable-number,
   .why-stable-icon,
-  .why-stable-action,
-  .why-shared-panel {
+  .why-stable-action {
     transition-duration: 0.01ms !important;
   }
 
-  .why-shared-panel-content {
-    animation: none !important;
+  .why-modal,
+  .why-modal-panel {
+    animation-duration: 0.01ms !important;
+  }
+}
+
+
+/* v15: VAPerforma connected wordmark and pulsing rotating globe */
+.vaperforma-brand-logo {
+  column-gap: 0 !important;
+}
+
+/* Pull PERFORMA close to the transparent edge of the spinning VA mark. */
+.vaperforma-brand-logo > span:last-child {
+  position: relative;
+  z-index: 2;
+}
+
+.vaperforma-globe-spinner {
+  animation-name: vaperforma-globe-pulse-turn !important;
+  animation-duration: 2.8s !important;
+  animation-timing-function: ease-in-out !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+  transform-origin: center center !important;
+}
+
+@keyframes vaperforma-globe-pulse-turn {
+  0% {
+    transform: rotateY(0deg) scale(0.9);
+  }
+
+  25% {
+    transform: rotateY(90deg) scale(1.18);
+  }
+
+  50% {
+    transform: rotateY(180deg) scale(0.82);
+  }
+
+  75% {
+    transform: rotateY(270deg) scale(1.18);
+  }
+
+  100% {
+    transform: rotateY(360deg) scale(0.9);
+  }
+}
+
+/* Keep the requested globe movement even when reduced-motion is enabled. */
+@media (prefers-reduced-motion: reduce) {
+  .vaperforma-globe-spinner {
+    animation-name: vaperforma-globe-pulse-turn !important;
+    animation-duration: 3.4s !important;
+    animation-timing-function: ease-in-out !important;
+    animation-iteration-count: infinite !important;
   }
 }

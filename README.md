@@ -11,7 +11,7 @@ This is the quality-reviewed long-scroll VAPerforma website.
 - Globe used as the “O” in the PERFORMA wordmark
 - Service words link to the exact matching service card
 - Expandable and keyboard-accessible service details
-- Book a Session buttons automatically preselect the service
+- Schedule a Discovery Call buttons automatically preselect the service
 - Detailed How It Works cards with hover, focus, and tap transitions
 - Optional estimated monthly budget
 - Facebook, Instagram, LinkedIn, and TikTok links
@@ -51,7 +51,7 @@ Test these items:
 1. Click every navigation link.
 2. Click a service word in the strip.
 3. Expand each service card.
-4. Click Book a Session and confirm the correct service is selected.
+4. Click Schedule a Discovery Call and confirm the correct service is selected.
 5. Expand each How It Works step by hover, keyboard focus, and tap.
 6. Open every social link.
 7. Submit one test inquiry.
@@ -108,7 +108,7 @@ Do not use `npm audit fix --force`.
 The interactive areas now use native browser controls:
 
 - Service **View Details** uses `<details>` and `<summary>`.
-- **Book a Session** uses a normal URL link.
+- **Schedule a Discovery Call** uses a normal URL link.
 - The page reads the service query on the server and preselects the form.
 - How It Works cards also use native expandable controls.
 - The VA logo is a crisp vector rather than a small raster screenshot.

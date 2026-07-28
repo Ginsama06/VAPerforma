@@ -59,7 +59,7 @@ export default async function HomePage({
                 href="#get-started"
                 className="brand-button inline-flex items-center justify-center gap-2 px-7 py-4"
               >
-                Book a Session
+                Schedule a Discovery Call
                 <ArrowRightIcon className="h-5 w-5" />
               </a>
 
@@ -132,8 +132,8 @@ export default async function HomePage({
 
             <p className="mt-5 text-lg leading-8 text-[#587074]">
               Select View Details for a complete service overview. Choose{" "}
-              <strong>Book a Session</strong> and the inquiry form will
-              automatically choose that service for you.
+              <strong>Discovery Call</strong> and the inquiry form will
+              automatically select that service for you.
             </p>
           </div>
 
@@ -211,7 +211,7 @@ export default async function HomePage({
       >
         <div className="section-container grid items-start gap-12 lg:grid-cols-[0.72fr_1.28fr]">
           <div className="lg:sticky lg:top-28">
-            <p className="eyebrow">Book a session</p>
+            <p className="eyebrow">Schedule a discovery call</p>
 
             <h2 className="mt-5 text-4xl font-black tracking-[-0.05em] text-[#092b30] sm:text-5xl">
               Tell us what your organization needs.
