@@ -1,58 +1,79 @@
-import Link from "next/link";
-import BrandMark from "@/components/BrandMark";
+import BrandLogo from "@/components/BrandLogo";
+import { socialLinks } from "@/data/site";
 
 export default function SiteFooter() {
   return (
-    <footer className="bg-[#07111f] text-white">
-      <div className="section-container grid gap-12 py-16 lg:grid-cols-[1.65fr_0.75fr]">
+    <footer className="bg-[#061f23] text-white">
+      <div className="section-container grid gap-12 py-16 lg:grid-cols-[1.5fr_0.7fr_0.8fr]">
         <div>
-          <Link
-            href="/why-us"
-            aria-label="Learn why clients choose VAPerforma"
-            className="inline-flex items-center gap-3"
+          <a
+            href="#home"
+            className="inline-flex rounded-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#2fc4c1]/30"
           >
-            <BrandMark size="large" />
-            <p className="font-black">VAPerforma</p>
-          </Link>
+            <BrandLogo size="footer" light />
+          </a>
 
-          <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-300">
-            Your trusted partner for professional virtual services. We
-            provide Executive and Administrative Assistance, Medical Virtual
-            Assistance, Social Media Management, Customer Support,
-            Appointment Scheduling, Website Development, Video Editing,
-            Legal Virtual Assistance, and Data Entry and Administrative
-            Support—all in one place.
+          <p className="mt-5 max-w-2xl text-sm leading-7 text-[#bdd6d1]">
+            Your trusted partner for professional virtual services across
+            administration, healthcare support, customer service, social media,
+            scheduling, website development, video editing, legal assistance,
+            and data entry.
           </p>
         </div>
 
         <div>
-          <p className="text-sm font-black uppercase tracking-[0.16em] text-slate-400">
-            Company
+          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#7fa9a3]">
+            Navigate
           </p>
 
-          <div className="mt-5 grid gap-3 text-sm text-slate-300">
-            <Link href="/" className="hover:text-white">
+          <nav
+            aria-label="Footer navigation"
+            className="mt-5 grid gap-3 text-sm text-[#bdd6d1]"
+          >
+            <a href="#home" className="transition hover:text-white">
               Home
-            </Link>
-            <Link href="/services" className="hover:text-white">
+            </a>
+            <a href="#services" className="transition hover:text-white">
               Services
-            </Link>
-            <Link href="/how-it-works" className="hover:text-white">
+            </a>
+            <a href="#how-it-works" className="transition hover:text-white">
               How It Works
-            </Link>
-            <Link href="/why-us" className="hover:text-white">
+            </a>
+            <a href="#why-us" className="transition hover:text-white">
               Why Us
-            </Link>
-            <Link href="/apply" className="hover:text-white">
+            </a>
+            <a href="#get-started" className="transition hover:text-white">
               Get Started
-            </Link>
+            </a>
+          </nav>
+        </div>
+
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#7fa9a3]">
+            Social Media
+          </p>
+
+          <div className="mt-5 grid gap-3 text-sm text-[#bdd6d1]">
+            {socialLinks.map((social) => (
+              <a
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition hover:text-white"
+              >
+                {social.name}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            ))}
           </div>
         </div>
       </div>
 
       <div className="border-t border-white/10">
-        <div className="section-container py-6 text-xs text-slate-400">
-          © 2026 VAPerforma. All rights reserved.
+        <div className="section-container flex flex-col gap-2 py-6 text-xs text-[#7fa9a3] sm:flex-row sm:items-center sm:justify-between">
+          <span>© {new Date().getFullYear()} VAPerforma. All rights reserved.</span>
+          <span>Professional virtual services for growing organizations.</span>
         </div>
       </div>
     </footer>

@@ -1,0 +1,14 @@
+VAPerforma Website Fixed v7
+
+WHY VAPERFORMA INTERACTIONS
+- All four cards are clickable and keyboard accessible.
+- Focused Matching opens How It Works.
+- Broad Professional Services opens Services.
+- Flexible Arrangements opens the Get Started form.
+- Guided Onboarding opens How It Works.
+- Cards lift, glow, and scale on hover/focus.
+- Icons animate.
+- Action arrows slide.
+- A soft light sweep crosses each card.
+- Tap feedback is included.
+- The interaction does not expand or disturb the grid layout.

@@ -1,0 +1,17 @@
+VAPerforma Website Fixed v11
+
+LOGO
+- Replaced the website mark with the exact cleaner 4K logo supplied by the client.
+- Near-white background removed for transparent website use.
+- Original aqua, green, and yellow gradients preserved.
+- Correct proportions preserved.
+- VA mark keeps its upright vertical-axis rotation.
+- Globe in PERFORMA keeps its upright rotation.
+- Favicon updated to the same logo.
+
+RETAINED
+- Stable equal Why VAPerforma cards with one shared detail panel.
+- Monthly budget is the only optional form field.
+- Working service details modal.
+- Working Book a Session links with automatic service selection.
+- Existing Resend email API integration.

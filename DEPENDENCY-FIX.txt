@@ -1,0 +1,24 @@
+VAPerforma dependency fix
+
+Cause:
+The previous package used the floating value "latest" for the framework,
+ESLint, and related packages. This allowed npm to install a mismatched
+dependency tree.
+
+Fixed:
+- next: 16.2.12
+- eslint-config-next: 16.2.12
+- eslint: 9.39.5
+- react/react-dom: 19.2.8
+- resend: 6.18.0
+- tailwindcss and @tailwindcss/postcss: 4.3.3
+
+Clean installation commands:
+
+Remove-Item -Recurse -Force node_modules, .next -ErrorAction SilentlyContinue
+Remove-Item -Force package-lock.json -ErrorAction SilentlyContinue
+npm cache verify
+npm install
+npm run check
+
+Do not run npm audit fix --force.

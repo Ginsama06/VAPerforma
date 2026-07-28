@@ -1,0 +1,17 @@
+VAPerforma Website Fixed v5
+
+LOGO
+- Replaced the previous approximation with a sharper vector based on the supplied VA mark.
+- VA mark rotates upright around the vertical axis.
+- Globe inside PERFORMA also rotates upright.
+- Wordmark letters remain still.
+- Hovering or focusing the complete logo pauses both animations.
+- Favicon updated to match the new mark.
+
+SERVICES
+- Service grid rows now use equal heights.
+- Every service card stretches to the full grid-row height.
+- View Details controls align consistently.
+- Book a Session controls align consistently.
+- Native details behavior and direct booking links are preserved.
+- Selected-service form preselection remains enabled.

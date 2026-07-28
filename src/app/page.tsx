@@ -1,180 +1,247 @@
-import Link from "next/link";
+import BrandLogo from "@/components/BrandLogo";
+import HowItWorks from "@/components/HowItWorks";
+import LeadForms from "@/components/LeadForms";
+import ServiceExplorer from "@/components/ServiceExplorer";
+import ServiceStrip from "@/components/ServiceStrip";
+import WhyUsCards from "@/components/WhyUsCards";
+import { services } from "@/data/site";
 import {
   ArrowRightIcon,
-  CalendarIcon,
-  MatchIcon,
-  OnboardingIcon
+  CheckIcon
 } from "@/components/Icons";
 
-const serviceStrip = [
-  "Administrative Support",
-  "Medical Virtual Assistant",
-  "Customer Support",
-  "Social Media",
-  "Web",
-  "Video",
-  "Legal",
-  "Data Entry"
-];
 
-const processSteps = [
-  {
-    number: "01",
-    title: "Discovery Call",
-    description:
-      "Understand the role, schedule, tools, and business priorities.",
-    icon: CalendarIcon
-  },
-  {
-    number: "02",
-    title: "Talent Matching",
-    description:
-      "Present the strongest Virtual Assistant candidates.",
-    icon: MatchIcon
-  },
-  {
-    number: "03",
-    title: "Onboarding Session",
-    description:
-      "Align responsibilities, communication, and expectations before work begins.",
-    icon: OnboardingIcon
-  }
-];
+type HomePageProps = {
+  searchParams: Promise<{
+    service?: string | string[];
+  }>;
+};
 
-export default function HomePage() {
+export default async function HomePage({
+  searchParams
+}: HomePageProps) {
+  const params = await searchParams;
+  const requestedSlug = Array.isArray(params.service)
+    ? params.service[0]
+    : params.service;
+  const initialService =
+    services.find((service) => service.slug === requestedSlug)?.title ?? "";
+
   return (
-    <main className="page-shell">
-      <section className="professional-hero relative overflow-hidden text-white">
-        <div className="subtle-grid pointer-events-none absolute inset-0" />
-        <div className="pointer-events-none absolute -right-24 top-16 h-80 w-80 rounded-full border border-white/10" />
-        <div className="pointer-events-none absolute right-12 top-36 h-52 w-52 rounded-full border border-white/10" />
+    <main id="main-content" className="page-shell">
+      <section
+        id="home"
+        className="hero-section scroll-mt-20 overflow-hidden"
+      >
+        <div className="hero-orb hero-orb-one" />
+        <div className="hero-orb hero-orb-two" />
 
-        <div className="section-container relative flex min-h-[650px] items-center py-20 lg:py-28">
-          <div className="max-w-5xl">
-            <p className="eyebrow eyebrow-light">
-              Comprehensive virtual services, delivered with excellence
-            </p>
+        <div className="section-container relative grid min-h-[700px] items-center gap-12 py-20 lg:grid-cols-[1.12fr_0.88fr] lg:py-28">
+          <div>
+            <p className="eyebrow">Professional virtual services</p>
 
-            <h1 className="mt-6 text-5xl font-black leading-[0.98] tracking-[-0.06em] sm:text-6xl lg:text-[4.9rem]">
-              Your trusted partner for{" "}
-              <span className="text-[#f6c95f]">
-                professional virtual services.
+            <h1 className="mt-6 max-w-5xl text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[#092b30] sm:text-6xl lg:text-[4.85rem]">
+              Virtual support that keeps your{" "}
+              <span className="brand-gradient-text">
+                business moving.
               </span>
             </h1>
 
-            <p className="mt-8 max-w-4xl text-lg leading-8 text-slate-200 sm:text-xl">
-              We provide Executive and Administrative Assistance, Medical
-              Virtual Assistance, Social Media Management, Customer Support,
-              Appointment Scheduling, Website Development, Video Editing,
-              Legal Virtual Assistance, and Data Entry and Administrative
-              Support—all in one place.
+            <p className="mt-8 max-w-3xl text-lg leading-8 text-[#587074] sm:text-xl">
+              VAPerforma connects organizations with professional support
+              across administration, healthcare operations, customer service,
+              social media, scheduling, website development, video editing,
+              legal administration, and data entry.
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/apply"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-7 py-4 font-black text-white shadow-lg shadow-blue-950/20 transition hover:bg-blue-500"
+              <a
+                href="#get-started"
+                className="brand-button inline-flex items-center justify-center gap-2 px-7 py-4"
               >
-                Schedule a Discovery Call
+                Book a Session
                 <ArrowRightIcon className="h-5 w-5" />
-              </Link>
+              </a>
 
-              <Link
-                href="/services"
-                className="inline-flex items-center justify-center rounded-full border border-white/25 bg-white/5 px-7 py-4 font-black text-white transition hover:bg-white hover:text-slate-950"
+              <a
+                href="#services"
+                className="secondary-button px-7 py-4 text-center"
               >
-                Explore Our Services
-              </Link>
+                Explore Services
+              </a>
+            </div>
+
+            <div
+              aria-label="VAPerforma process shortcuts"
+              className="mt-10 flex flex-wrap gap-3"
+            >
+              <a href="#how-it-works" className="hero-process-chip">
+                Discovery Call
+              </a>
+              <a href="#how-it-works" className="hero-process-chip">
+                Talent Matching
+              </a>
+              <a href="#how-it-works" className="hero-process-chip">
+                Onboarding Session
+              </a>
+            </div>
+          </div>
+
+          <div className="relative mx-auto grid w-full max-w-[500px] place-items-center">
+            <div className="hero-logo-halo" />
+
+            <div className="hero-brand-card relative grid min-h-[360px] w-full place-items-center rounded-[2.5rem] border border-white/75 bg-white/[0.68] p-8 text-center backdrop-blur-lg sm:min-h-[430px]">
+              <div>
+                <BrandLogo size="hero" />
+
+                <p className="mx-auto mt-8 max-w-sm text-sm font-black uppercase tracking-[0.18em] text-[#648083]">
+                  Virtual Assistance, performed better
+                </p>
+
+                <p className="mx-auto mt-4 max-w-sm text-sm leading-7 text-[#587074]">
+                  One guided partner for the support functions that keep your
+                  organization responsive, organized, and ready to grow.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="border-b border-slate-200 bg-white py-9">
+      <section className="border-y border-[#dceee8] bg-white py-9">
         <div className="section-container">
-          <p className="text-center text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+          <p className="text-center text-xs font-black uppercase tracking-[0.18em] text-[#648083]">
             Designed for organizations that need reliable operational support
           </p>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm font-black text-slate-800">
-            {serviceStrip.map((service, index) => (
-              <span key={service} className="inline-flex items-center gap-3">
-                {index > 0 && (
-                  <span aria-hidden="true" className="text-blue-600">
-                    •
-                  </span>
-                )}
-                {service}
-              </span>
-            ))}
-          </div>
+          <ServiceStrip />
         </div>
       </section>
 
-      <section className="bg-[#f6f8fb] py-24 sm:py-28">
-        <div className="section-container grid items-center gap-14 lg:grid-cols-[0.8fr_1.2fr]">
-          <div>
-            <p className="eyebrow">Simple by design</p>
-            <h2 className="mt-5 text-4xl font-black tracking-[-0.05em] text-slate-950 sm:text-5xl">
-              One guided process from discovery to onboarding.
+      <section
+        id="services"
+        className="scroll-mt-20 bg-[#f4fbf8] py-24 sm:py-28"
+      >
+        <div className="section-container">
+          <div className="max-w-4xl">
+            <p className="eyebrow">Choose the support you need</p>
+
+            <h2 className="mt-5 text-4xl font-black tracking-[-0.05em] text-[#092b30] sm:text-5xl">
+              One partner for the work that keeps your organization moving.
             </h2>
 
-            <Link
-              href="/how-it-works"
-              className="mt-8 inline-flex items-center gap-2 font-black text-blue-700 transition hover:text-blue-900"
-            >
-              See how the process works
-              <ArrowRightIcon className="h-5 w-5" />
-            </Link>
+            <p className="mt-5 text-lg leading-8 text-[#587074]">
+              Select View Details for a complete service overview. Choose{" "}
+              <strong>Book a Session</strong> and the inquiry form will
+              automatically choose that service for you.
+            </p>
           </div>
 
-          <div className="grid gap-4">
-            {processSteps.map(({ number, title, description, icon: Icon }) => (
-              <article
-                key={number}
-                className="rounded-[1.5rem] border border-slate-200 bg-white p-6 soft-shadow"
-              >
-                <div className="flex gap-5">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-slate-950 text-sm font-black text-white">
-                    {number}
-                  </span>
+          <ServiceExplorer />
+        </div>
+      </section>
 
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between gap-4">
-                      <h3 className="text-xl font-black">{title}</h3>
-                      <Icon className="h-6 w-6 shrink-0 text-blue-700" />
-                    </div>
-                    <p className="mt-2 leading-7 text-slate-600">
-                      {description}
-                    </p>
-                  </div>
-                </div>
-              </article>
-            ))}
+      <section
+        id="how-it-works"
+        className="scroll-mt-20 bg-white py-24 sm:py-28"
+      >
+        <div className="section-container">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="eyebrow justify-center">A clear guided process</p>
+
+            <h2 className="mt-5 text-4xl font-black tracking-[-0.05em] text-[#092b30] sm:text-5xl">
+              From discovery to a confident working start.
+            </h2>
+
+            <p className="mt-5 text-lg leading-8 text-[#587074]">
+              Hover, focus, or tap a step to enlarge it and reveal what happens
+              during that stage.
+            </p>
+          </div>
+
+          <HowItWorks />
+
+          <div className="mt-12 text-center">
+            <a
+              href="#get-started"
+              className="brand-button inline-flex items-center gap-2 px-7 py-4"
+            >
+              Schedule a Discovery Call
+              <ArrowRightIcon className="h-5 w-5" />
+            </a>
           </div>
         </div>
       </section>
 
-      <section className="bg-blue-700 py-16 text-white">
-        <div className="section-container flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
+      <section
+        id="why-us"
+        className="scroll-mt-20 bg-[#092b30] py-24 text-white sm:py-28"
+      >
+        <div className="section-container grid items-start gap-14 lg:grid-cols-[0.88fr_1.12fr]">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-100">
-              Ready to explore the right support?
+            <p className="eyebrow eyebrow-light">Why VAPerforma</p>
+
+            <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.05em] sm:text-5xl">
+              The right support creates more room for focus, service, and
+              growth.
+            </h2>
+
+            <p className="mt-7 text-lg leading-9 text-[#c7ded9]">
+              We help organizations define the work, review suitable support,
+              and create a clearer path into onboarding—without forcing
+              clients to search through an overwhelming directory.
             </p>
 
-            <h2 className="mt-3 max-w-4xl text-3xl font-black leading-tight tracking-[-0.04em] sm:text-4xl">
-              Your success starts with the right support. Tell us what your
-              organization needs, and we’ll match you with a top-tier Virtual
-              Assistant ready to help your business grow.
-            </h2>
+            <a
+              href="#get-started"
+              className="mt-9 inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 font-black text-[#092b30] transition hover:-translate-y-0.5 hover:bg-[#e8f6ef]"
+            >
+              Start the Conversation
+              <ArrowRightIcon className="h-5 w-5" />
+            </a>
           </div>
 
-          <Link
-            href="/apply"
-            className="shrink-0 rounded-full bg-white px-7 py-4 font-black text-blue-800 transition hover:bg-[#fff7dc]"
-          >
-            Schedule a Discovery Call
-          </Link>
+          <WhyUsCards />
+        </div>
+      </section>
+
+      <section
+        id="get-started"
+        className="scroll-mt-20 bg-[#f4fbf8] py-24 sm:py-28"
+      >
+        <div className="section-container grid items-start gap-12 lg:grid-cols-[0.72fr_1.28fr]">
+          <div className="lg:sticky lg:top-28">
+            <p className="eyebrow">Book a session</p>
+
+            <h2 className="mt-5 text-4xl font-black tracking-[-0.05em] text-[#092b30] sm:text-5xl">
+              Tell us what your organization needs.
+            </h2>
+
+            <p className="mt-6 text-lg leading-8 text-[#587074]">
+              Your inquiry goes directly to the VAPerforma business email.
+              A team member can review the role and contact you about the
+              next step.
+            </p>
+
+            <ul className="mt-8 grid gap-4">
+              {[
+                "Select one service or combine several responsibilities",
+                "Estimated monthly budget is optional",
+                "Use the client email field so we can reply directly",
+                "Do not include confidential or protected information"
+              ].map((item) => (
+                <li
+                  key={item}
+                  className="flex gap-3 font-semibold text-[#29484b]"
+                >
+                  <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-[#20aaa6]" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <LeadForms initialService={initialService} />
         </div>
       </section>
     </main>

@@ -1,20 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --navy-950: #07111f;
-  --navy-900: #0b1d33;
-  --navy-800: #123358;
-  --blue-700: #1f5bd8;
-  --blue-600: #2b6de8;
-  --blue-100: #eaf2ff;
-  --cyan-100: #e7fbfb;
-  --cyan-700: #0b7f87;
-  --gold-400: #f6c95f;
-  --gold-100: #fff7dc;
-  --slate-900: #152033;
-  --slate-600: #5e6c80;
-  --slate-200: #dce4ee;
-  --surface: #f6f8fb;
+  --ink: #092b30;
+  --ink-soft: #29484b;
+  --muted: #587074;
+  --aqua: #2fc4c1;
+  --teal: #20aaa6;
+  --green: #72d28c;
+  --lime: #dce45a;
+  --surface: #f4fbf8;
+  --border: #d7ece6;
 }
 
 * {
@@ -23,16 +18,23 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
   margin: 0;
-  color: var(--slate-900);
+  color: var(--ink);
   background: #ffffff;
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 
 button,
@@ -42,28 +44,52 @@ textarea {
   font: inherit;
 }
 
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
 a {
   text-decoration: none;
 }
 
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(47, 196, 193, 0.45);
+  outline-offset: 3px;
+}
+
 ::selection {
-  color: #07111f;
-  background: #f6c95f;
+  color: var(--ink);
+  background: var(--lime);
 }
 
-.professional-hero {
-  background:
-    radial-gradient(circle at 83% 20%, rgba(72, 139, 255, 0.22), transparent 22rem),
-    radial-gradient(circle at 7% 93%, rgba(15, 183, 191, 0.15), transparent 20rem),
-    linear-gradient(135deg, #07111f 0%, #0c2a4b 55%, #123f6f 100%);
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 0.75rem;
+  z-index: 100;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #ffffff;
+  background: #092b30;
+  font-weight: 900;
+  transform: translateY(-150%);
+  transition: transform 0.2s ease;
 }
 
-.subtle-grid {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: linear-gradient(to bottom, black 0%, transparent 92%);
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 .page-shell {
@@ -75,58 +101,74 @@ a {
   margin-inline: auto;
 }
 
-.soft-shadow {
-  box-shadow: 0 24px 70px rgba(7, 28, 54, 0.13);
+.hero-section {
+  position: relative;
+  background:
+    radial-gradient(
+      circle at 86% 16%,
+      rgba(220, 228, 90, 0.28),
+      transparent 23rem
+    ),
+    radial-gradient(
+      circle at 9% 90%,
+      rgba(47, 196, 193, 0.2),
+      transparent 25rem
+    ),
+    linear-gradient(135deg, #ffffff 0%, #f2fbf8 52%, #eef9f2 100%);
 }
 
-.card-lift {
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    border-color 180ms ease;
+.hero-orb {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
 }
 
-.card-lift:hover {
-  transform: translateY(-5px);
-  border-color: #b9c9dc;
-  box-shadow: 0 24px 60px rgba(7, 28, 54, 0.11);
+.hero-orb-one {
+  right: -8rem;
+  top: 5rem;
+  width: 25rem;
+  height: 25rem;
+  border: 1px solid rgba(47, 196, 193, 0.25);
 }
 
-.form-field {
-  width: 100%;
-  min-height: 3.35rem;
-  border: 1px solid #d6dfeb;
-  border-radius: 0.9rem;
-  padding: 0.85rem 0.95rem;
-  color: #142034;
-  background: #ffffff;
-  outline: none;
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    background-color 160ms ease;
+.hero-orb-two {
+  right: 7rem;
+  top: 12rem;
+  width: 15rem;
+  height: 15rem;
+  border: 1px solid rgba(114, 210, 140, 0.38);
 }
 
-.form-field::placeholder {
-  color: #8a97a8;
+.hero-logo-halo {
+  position: absolute;
+  width: min(92vw, 440px);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.96) 0 36%,
+      transparent 37%
+    ),
+    conic-gradient(
+      from 135deg,
+      rgba(47, 196, 193, 0.34),
+      rgba(114, 210, 140, 0.28),
+      rgba(220, 228, 90, 0.34),
+      rgba(47, 196, 193, 0.34)
+    );
+  box-shadow: 0 35px 100px rgba(22, 95, 87, 0.15);
 }
 
-.form-field:focus {
-  border-color: #2b6de8;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(43, 109, 232, 0.11);
-}
-
-textarea.form-field {
-  min-height: 8.5rem;
-  resize: vertical;
+.hero-brand-card {
+  box-shadow: 0 30px 90px rgba(20, 86, 79, 0.12);
 }
 
 .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
-  color: #2b6de8;
+  color: #159b98;
   font-size: 0.75rem;
   font-weight: 900;
   letter-spacing: 0.18em;
@@ -141,55 +183,260 @@ textarea.form-field {
 }
 
 .eyebrow-light {
-  color: #b7d6ff;
+  color: #8ce0d4;
 }
 
-.gold-underline {
-  position: relative;
-  display: inline;
-  z-index: 0;
+.brand-gradient-text {
+  color: transparent;
+  background: linear-gradient(
+    110deg,
+    #18aaa7 0%,
+    #57c591 53%,
+    #b8cb38 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
-.gold-underline::after {
-  position: absolute;
-  right: -0.05em;
-  bottom: 0.04em;
-  left: -0.05em;
-  z-index: -1;
-  height: 0.22em;
-  content: "";
-  background: #f6c95f;
-  opacity: 0.92;
-  transform: rotate(-0.6deg);
+.brand-button {
+  border: 0;
+  border-radius: 999px;
+  color: #092b30;
+  font-weight: 900;
+  background: linear-gradient(
+    110deg,
+    #2fc4c1 0%,
+    #72d28c 58%,
+    #dce45a 100%
+  );
+  box-shadow: 0 16px 36px rgba(31, 169, 158, 0.22);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
 }
 
-@media (max-width: 640px) {
-  .section-container {
-    width: min(100% - 1.5rem, 1180px);
+.brand-button:hover,
+.brand-button:focus-visible {
+  transform: translateY(-2px);
+  filter: saturate(1.08);
+  box-shadow: 0 20px 45px rgba(31, 169, 158, 0.3);
+}
+
+.secondary-button {
+  border: 1px solid #abd7cc;
+  border-radius: 999px;
+  color: #0b7472;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.84);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.secondary-button:hover,
+.secondary-button:focus-visible {
+  transform: translateY(-2px);
+  border-color: #20aaa6;
+  background: #ffffff;
+}
+
+.hero-process-chip {
+  border: 1px solid #cfe7e1;
+  border-radius: 999px;
+  padding: 0.65rem 0.9rem;
+  color: #39575a;
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+  font-weight: 800;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.hero-process-chip:hover,
+.hero-process-chip:focus-visible {
+  transform: scale(1.07);
+  color: #0b7472;
+  border-color: #72d28c;
+  background: #ffffff;
+}
+
+.service-word {
+  display: inline-block;
+  border-radius: 0.4rem;
+  color: #29484b;
+  font-size: 0.9rem;
+  font-weight: 900;
+  transition:
+    transform 0.18s ease,
+    color 0.18s ease;
+}
+
+.service-word:hover,
+.service-word:focus-visible {
+  color: #159b98;
+  transform: scale(1.13);
+}
+
+.service-card {
+  cursor: pointer;
+  border-color: #d4e8e2;
+  box-shadow: 0 12px 34px rgba(20, 86, 79, 0.07);
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.service-card:hover,
+.service-card:focus-within,
+.service-card-expanded,
+.service-card:target {
+  transform: translateY(-7px);
+  border-color: #83d5c6;
+  box-shadow: 0 28px 65px rgba(20, 86, 79, 0.14);
+}
+
+.service-card:target {
+  animation: service-target-pulse 1.1s ease;
+}
+
+@keyframes service-target-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(47, 196, 193, 0.38);
+  }
+  100% {
+    box-shadow: 0 0 0 18px rgba(47, 196, 193, 0);
   }
 }
 
-/* VAPerforma logo: upright standing 360-degree turn */
-.vaperforma-beyblade-scene {
+.service-icon {
+  color: #0b7472;
+  background: linear-gradient(145deg, #eafaf6, #f8fde9);
+  border: 1px solid #bfe4da;
+}
+
+.process-card {
+  border-color: #d7ece6;
+  box-shadow: 0 16px 45px rgba(20, 86, 79, 0.07);
+}
+
+.process-card:hover,
+.process-card:focus-visible {
+  border-color: #91d8c9;
+}
+
+.process-card-active {
+  border-color: #72d28c;
+  background: linear-gradient(145deg, #f8fffb, #f6fbe6);
+  box-shadow: 0 30px 75px rgba(20, 86, 79, 0.16);
+}
+
+.why-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.035)
+  );
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.why-card:hover,
+.why-card:focus-within {
+  transform: translateY(-5px);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.13),
+    rgba(255, 255, 255, 0.055)
+  );
+}
+
+.form-shadow {
+  box-shadow: 0 28px 80px rgba(20, 86, 79, 0.12);
+}
+
+.form-label {
+  color: #29484b;
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+.form-field {
+  width: 100%;
+  min-height: 3.35rem;
+  border: 1px solid #cee3dd;
+  border-radius: 0.95rem;
+  padding: 0.85rem 0.95rem;
+  color: #092b30;
+  background: #ffffff;
+  outline: none;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
+}
+
+.form-field::placeholder {
+  color: #8aa09f;
+}
+
+.form-field:focus {
+  border-color: #20aaa6;
+  box-shadow: 0 0 0 4px rgba(47, 196, 193, 0.13);
+}
+
+textarea.form-field {
+  min-height: 9rem;
+  resize: vertical;
+}
+
+.social-rail {
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+}
+
+.social-link:focus-visible {
+  outline: 3px solid rgba(220, 228, 90, 0.7);
+  outline-offset: 3px;
+}
+
+.social-tooltip {
+  transform: translateX(0.5rem);
+}
+
+.social-link:hover .social-tooltip,
+.social-link:focus-visible .social-tooltip {
+  transform: translateX(0);
+}
+
+/* The VA symbol stays upright and turns around its vertical axis. */
+.vaperforma-logo-scene {
   display: inline-grid;
   place-items: center;
   overflow: visible;
-  perspective: 700px;
+  perspective: 900px;
+  position: relative;
+  z-index: 1;
 }
 
-.vaperforma-beyblade-spinner {
+.vaperforma-logo-spinner {
   display: grid;
   width: 100%;
   height: 100%;
   place-items: center;
   transform-origin: center center;
   transform-style: preserve-3d;
-  animation: vaperforma-standing-turn 2.4s linear infinite;
+  animation: vaperforma-standing-turn 2.6s linear infinite;
+  filter: drop-shadow(0 8px 10px rgba(20, 112, 107, 0.18));
   will-change: transform;
 }
 
-.vaperforma-beyblade-scene:hover .vaperforma-beyblade-spinner,
-a:hover .vaperforma-beyblade-spinner {
+.vaperforma-logo-scene:hover .vaperforma-logo-spinner {
   animation-play-state: paused;
 }
 
@@ -200,5 +447,578 @@ a:hover .vaperforma-beyblade-spinner {
 
   to {
     transform: rotateY(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .section-container {
+    width: min(100% - 1.5rem, 1180px);
+  }
+
+  .hero-logo-halo {
+    width: min(88vw, 360px);
+  }
+
+  .social-rail {
+    right: 0.75rem;
+    gap: 0.6rem;
+  }
+
+  .social-link {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+
+/* v4: robust native service and process disclosures */
+.service-summary,
+.process-summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.service-summary::-webkit-details-marker,
+.process-summary::-webkit-details-marker {
+  display: none;
+}
+
+.service-card {
+  cursor: default;
+}
+
+.service-card:hover,
+.service-card:focus-within,
+.service-card:has(.service-disclosure[open]) {
+  transform: translateY(-7px);
+  border-color: #83d5c6;
+  box-shadow: 0 28px 65px rgba(20, 86, 79, 0.14);
+}
+
+.service-chevron,
+.service-label-chevron,
+.process-label-chevron {
+  transition: transform 0.3s ease;
+}
+
+.service-disclosure[open] .service-chevron,
+.service-disclosure[open] .service-label-chevron,
+.process-card[open] .process-label-chevron {
+  transform: rotate(180deg);
+}
+
+.service-label-open,
+.process-label-open {
+  display: none;
+}
+
+.service-disclosure[open] .service-label-closed,
+.process-card[open] .process-label-closed {
+  display: none;
+}
+
+.service-disclosure[open] .service-label-open,
+.process-card[open] .process-label-open {
+  display: inline;
+}
+
+.service-detail-panel,
+.process-detail-panel {
+  animation: disclosure-reveal 0.35s ease both;
+}
+
+@keyframes disclosure-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.process-card {
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease;
+}
+
+.process-card:hover,
+.process-card:focus-within,
+.process-card[open] {
+  transform: translateY(-8px) scale(1.015);
+  border-color: #72d28c;
+  background: linear-gradient(145deg, #f8fffb, #f6fbe6);
+  box-shadow: 0 30px 75px rgba(20, 86, 79, 0.16);
+}
+
+/* v4: crisp vector logo */
+.vaperforma-logo-spinner {
+  filter: none;
+  backface-visibility: visible;
+  image-rendering: auto;
+  animation-duration: 3.4s;
+}
+
+.vaperforma-logo-spinner svg {
+  display: block;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
+@media (hover: none) {
+  .service-card:hover,
+  .process-card:hover {
+    transform: none;
+  }
+
+  .service-card:has(.service-disclosure[open]),
+  .process-card[open] {
+    transform: translateY(-4px);
+  }
+}
+
+/* v5: supplied VA mark and rotating globe */
+.vaperforma-brand-logo {
+  isolation: isolate;
+}
+
+.vaperforma-logo-scene,
+.vaperforma-globe-scene {
+  display: inline-grid;
+  place-items: center;
+  overflow: visible;
+  perspective: 900px;
+}
+
+.vaperforma-logo-spinner,
+.vaperforma-globe-spinner {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  animation: vaperforma-standing-turn 3.2s linear infinite;
+  will-change: transform;
+}
+
+.vaperforma-logo-spinner {
+  filter: none;
+}
+
+.vaperforma-globe-spinner {
+  color: #2fc4c1;
+  animation-duration: 2.6s;
+}
+
+.vaperforma-brand-logo:hover .vaperforma-logo-spinner,
+.vaperforma-brand-logo:hover .vaperforma-globe-spinner,
+.vaperforma-brand-logo:focus-within .vaperforma-logo-spinner,
+.vaperforma-brand-logo:focus-within .vaperforma-globe-spinner {
+  animation-play-state: paused;
+}
+
+.vaperforma-logo-spinner svg,
+.vaperforma-globe-spinner svg {
+  display: block;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
+/* v5: equal service-card heights and aligned actions */
+.service-grid {
+  grid-auto-rows: 1fr;
+}
+
+.service-card {
+  min-width: 0;
+  height: 100%;
+}
+
+.service-disclosure {
+  min-height: 100%;
+}
+
+.service-summary {
+  min-height: 100%;
+}
+
+.service-details-label,
+.service-book-button {
+  min-height: 3.5rem;
+}
+
+@media (min-width: 1280px) {
+  .service-card h3 {
+    min-height: 3.75rem;
+  }
+
+  .service-card > .service-disclosure > .service-summary > p:nth-of-type(1) {
+    min-height: 5.25rem;
+  }
+
+  .service-card > .service-disclosure > .service-summary > p:nth-of-type(2) {
+    min-height: 7rem;
+  }
+
+  .service-card > .service-disclosure > .service-summary > ul {
+    min-height: 8.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vaperforma-logo-spinner,
+  .vaperforma-globe-spinner {
+    animation: none !important;
+  }
+}
+
+/* v6: exact supplied mark, continuous upright rotation */
+.vaperforma-logo-scene,
+.vaperforma-globe-scene {
+  display: inline-grid;
+  place-items: center;
+  overflow: visible;
+  perspective: 900px;
+}
+
+.vaperforma-logo-spinner,
+.vaperforma-globe-spinner {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  animation-name: vaperforma-standing-turn !important;
+  animation-timing-function: linear !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+  will-change: transform;
+}
+
+.vaperforma-logo-spinner {
+  animation-duration: 3.2s !important;
+}
+
+.vaperforma-globe-spinner {
+  animation-duration: 2.4s !important;
+}
+
+.vaperforma-logo-spinner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: auto;
+}
+
+/* v6: stable service-card alignment */
+.service-grid {
+  grid-auto-rows: 1fr;
+  align-items: stretch;
+}
+
+.service-card {
+  min-width: 0;
+  height: 100%;
+  cursor: default;
+}
+
+.service-card-actions {
+  margin-top: auto;
+}
+
+.service-modal {
+  animation: service-modal-fade 0.2s ease both;
+}
+
+.service-modal > div {
+  animation: service-modal-rise 0.28s ease both;
+}
+
+@keyframes service-modal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes service-modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (min-width: 1280px) {
+  .service-card-title {
+    min-height: 3.75rem;
+  }
+
+  .service-card-description {
+    min-height: 5.25rem;
+  }
+
+  .service-card-ideal {
+    min-height: 7rem;
+  }
+
+  .service-card-tasks {
+    min-height: 8.5rem;
+  }
+}
+
+/* The client explicitly requested continuous logo movement. */
+@media (prefers-reduced-motion: reduce) {
+  .vaperforma-logo-spinner,
+  .vaperforma-globe-spinner {
+    animation-name: vaperforma-standing-turn !important;
+    animation-duration: 4s !important;
+    animation-timing-function: linear !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
+/* v9: stable equal Why VAPerforma cards */
+.why-stable-grid {
+  grid-auto-rows: 1fr;
+  align-items: stretch;
+}
+
+.why-stable-card {
+  height: 100%;
+  border-color: rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.035)
+    );
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+  transform: translateZ(0);
+  transition:
+    transform 0.26s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.26s ease,
+    background 0.26s ease,
+    box-shadow 0.26s ease;
+}
+
+.why-stable-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background:
+    linear-gradient(
+      120deg,
+      transparent 18%,
+      rgba(255, 255, 255, 0.11) 45%,
+      transparent 72%
+    );
+  transform: translateX(-85%);
+  transition:
+    transform 0.55s ease,
+    opacity 0.26s ease;
+}
+
+.why-stable-card:hover,
+.why-stable-card:focus-visible,
+.why-stable-card.is-selected {
+  transform: translateY(-7px);
+  border-color: rgba(220, 228, 90, 0.62);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.15),
+      rgba(47, 196, 193, 0.08)
+    );
+  box-shadow:
+    0 25px 68px rgba(0, 0, 0, 0.19),
+    0 0 0 1px rgba(220, 228, 90, 0.12);
+}
+
+.why-stable-card:hover::after,
+.why-stable-card:focus-visible::after,
+.why-stable-card.is-selected::after {
+  opacity: 1;
+  transform: translateX(85%);
+}
+
+.why-stable-card:active {
+  transform: translateY(-2px) scale(0.992);
+}
+
+.why-stable-glow {
+  opacity: 0.18;
+  background:
+    radial-gradient(
+      circle,
+      rgba(220, 228, 90, 0.88) 0%,
+      rgba(47, 196, 193, 0.25) 44%,
+      transparent 74%
+    );
+  filter: blur(10px);
+  transform: scale(0.72);
+  transition:
+    opacity 0.28s ease,
+    transform 0.34s ease;
+}
+
+.why-stable-card:hover .why-stable-glow,
+.why-stable-card:focus-visible .why-stable-glow,
+.why-stable-card.is-selected .why-stable-glow {
+  opacity: 0.48;
+  transform: scale(1.12);
+}
+
+.why-stable-number {
+  color: rgba(255, 255, 255, 0.24);
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.why-stable-card:hover .why-stable-number,
+.why-stable-card:focus-visible .why-stable-number,
+.why-stable-card.is-selected .why-stable-number {
+  color: rgba(220, 228, 90, 0.72);
+  transform: translateY(-2px);
+}
+
+.why-stable-icon {
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.why-stable-card:hover .why-stable-icon,
+.why-stable-card:focus-visible .why-stable-icon,
+.why-stable-card.is-selected .why-stable-icon {
+  transform: rotate(-4deg) scale(1.1);
+  border-color: rgba(220, 228, 90, 0.66);
+  background: rgba(220, 228, 90, 0.15);
+  box-shadow: 0 10px 28px rgba(220, 228, 90, 0.12);
+}
+
+.why-stable-action {
+  opacity: 0.82;
+  transition:
+    opacity 0.24s ease,
+    gap 0.24s ease;
+}
+
+.why-stable-card:hover .why-stable-action,
+.why-stable-card:focus-visible .why-stable-action,
+.why-stable-card.is-selected .why-stable-action {
+  opacity: 1;
+  gap: 0.7rem;
+}
+
+/* One shared panel below the fixed 2x2 grid */
+.why-shared-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  margin-top: 0;
+  transform: translateY(-8px);
+  transition:
+    grid-template-rows 0.42s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.28s ease,
+    margin-top 0.3s ease,
+    transform 0.34s ease;
+}
+
+.why-shared-panel.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 1.25rem;
+  transform: translateY(0);
+}
+
+.why-shared-panel-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.why-shared-panel-content {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.6rem;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.11),
+      rgba(47, 196, 193, 0.06)
+    );
+  padding: 1.5rem;
+  box-shadow: 0 22px 58px rgba(0, 0, 0, 0.15);
+  animation: why-shared-content-in 0.32s ease both;
+}
+
+@keyframes why-shared-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .why-shared-panel-content {
+    padding: 1.75rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .why-stable-card {
+    min-height: 15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .why-stable-card,
+  .why-stable-card::after,
+  .why-stable-glow,
+  .why-stable-number,
+  .why-stable-icon,
+  .why-stable-action,
+  .why-shared-panel {
+    transition-duration: 0.01ms !important;
+  }
+
+  .why-shared-panel-content {
+    animation: none !important;
   }
 }

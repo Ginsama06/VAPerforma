@@ -1,0 +1,13 @@
+VAPerforma Website Fixed v9
+
+WHY VAPERFORMA
+- All four cards always remain equal in a fixed 2x2 grid.
+- Clicking a card does not change its width or grid position.
+- Detailed content appears in one shared animated panel below the grid.
+- Only the selected card is highlighted.
+- Clicking the selected card again closes the panel.
+- Switching cards replaces the shared detail content without breaking layout.
+- Keyboard and screen-reader expanded states are preserved.
+
+FORM
+- Estimated monthly budget remains the only optional field.

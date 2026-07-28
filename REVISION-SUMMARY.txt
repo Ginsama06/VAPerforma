@@ -1,0 +1,56 @@
+VAPerforma LONG-SCROLL PERFECTED REVISION
+
+BRAND
+- Exact visible brand spelling: VAPerforma
+- Aqua, green, and lime visual system
+- Transparent VA logo asset
+- Upright 360-degree vertical-axis logo turn
+- Logo pauses when directly hovered
+- Globe used as the O in PERFORMA
+
+STRUCTURE
+- Fewer tabs and more scrolling
+- Home, Services, How It Works, Why Us, and Get Started remain as sections
+- Old page addresses redirect to the matching section
+
+HOME
+- Service words grow on hover
+- Each service word opens the exact service card
+- Discovery Call, Talent Matching, and Onboarding shortcuts open How It Works
+- Former process eyebrow copy removed
+
+SERVICES
+- Former services eyebrow copy removed
+- All nine service cards have expanded descriptions
+- Cards include best-fit guidance, tasks, and expected improvements
+- Card click opens details
+- Book a Session scrolls to the form
+- Selected service is automatically filled in
+- Direct links support ?service=service-slug#get-started
+
+HOW IT WORKS
+- Cards enlarge smoothly on hover, focus, or tap
+- Each card includes focus, detailed actions, and a result
+- Keyboard and mobile interaction supported
+
+FORM
+- Estimated monthly budget is optional
+- Service preselection is reliable and visible
+- Telephone and start date are optional
+- Added autocomplete attributes
+- Added request timeout and improved error messages
+- Added hidden honeypot and form-completion timing protection
+- Inquiry still sends to the business email through Resend
+
+SOCIAL
+- Floating bottom-right Facebook, Instagram, LinkedIn, and TikTok buttons
+- Hover/focus platform tooltip
+- All external links open safely in a new tab
+
+QUALITY
+- Fixed nested interactive controls in service cards
+- Added skip-to-content link
+- Added focus states and aria labels
+- Improved mobile spacing and safe-area behavior
+- Strengthened API validation and request-size handling
+- Added no-cache API responses

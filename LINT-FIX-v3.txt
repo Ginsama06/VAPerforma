@@ -1,0 +1,13 @@
+VAPerforma v3 lint fix
+
+Resolved:
+react-hooks/set-state-in-effect in src/components/LeadForms.tsx
+
+Changes:
+- formStartedAt now uses a lazy useState initializer.
+- Initial URL service selection runs in a scheduled callback after mount.
+- The scheduled callback is cleared during effect cleanup.
+- No ESLint rule was disabled or suppressed.
+
+Run:
+npm run check

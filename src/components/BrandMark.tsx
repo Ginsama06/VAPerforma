@@ -1,29 +1,38 @@
 import Image from "next/image";
 
 type BrandMarkProps = {
-  size?: "small" | "default" | "large";
+  size?: "small" | "default" | "large" | "hero";
+  priority?: boolean;
 };
 
 const sizeClasses = {
   small: "h-9 w-9",
-  default: "h-11 w-11",
-  large: "h-14 w-14"
+  default: "h-12 w-12",
+  large: "h-16 w-16",
+  hero: "h-28 w-28 sm:h-36 sm:w-36"
 };
 
 export default function BrandMark({
-  size = "default"
+  size = "default",
+  priority = false
 }: BrandMarkProps) {
   return (
     <span
-      className={`vaperforma-beyblade-scene ${sizeClasses[size]} shrink-0`}
+      aria-hidden="true"
+      className={`vaperforma-logo-scene ${sizeClasses[size]} shrink-0`}
     >
-      <span className="vaperforma-beyblade-spinner">
+      <span className="vaperforma-logo-spinner">
         <Image
-          src="/vaperforma-logo.png"
+          src="/vaperforma-va-mark.png"
           alt=""
-          width={512}
-          height={512}
-          priority
+          width={1626}
+                  height={1626}
+          priority={priority}
+          sizes={
+            size === "hero"
+              ? "(max-width: 640px) 112px, 144px"
+              : "64px"
+          }
           className="h-full w-full object-contain"
         />
       </span>

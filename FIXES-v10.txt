@@ -1,0 +1,16 @@
+VAPerforma Website Fixed v10
+
+LOGO
+- Replaced the previous low-resolution mark with the exact HD logo supplied by the client.
+- White background removed cleanly for transparent website use.
+- Original aqua, green, and yellow gradients preserved.
+- Correct square proportions preserved.
+- Upright vertical-axis rotation remains enabled.
+- Globe rotation remains enabled.
+- Favicon updated to the same HD logo.
+
+WHY VAPERFORMA
+- Stable equal cards and shared detail panel from v9 retained.
+
+FORM
+- Monthly budget remains the only optional field.

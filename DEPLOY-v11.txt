@@ -1,0 +1,21 @@
+Deploy VAPerforma v11
+
+1. Run:
+   npm install
+   npm run check
+   npm run dev
+
+2. After local testing, copy v11 files into your existing GitHub-connected
+   VAPerforma project folder.
+
+3. Then run:
+   git add .
+   git commit -m "Use final 4K VAPerforma logo"
+   git push origin main
+
+4. Vercel will automatically deploy the GitHub main branch.
+
+5. Existing Vercel environment variables remain unchanged:
+   RESEND_API_KEY
+   BUSINESS_EMAIL
+   RESEND_FROM_EMAIL

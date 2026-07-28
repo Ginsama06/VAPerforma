@@ -1,0 +1,36 @@
+VAPerforma QUALITY ASSURANCE REPORT
+
+Automated checks passed: 20/20
+
+[PASS] Required project files
+[PASS] Exact VAPerforma brand casing
+[PASS] Removed old visible phrases
+[PASS] Standing vertical logo rotation
+[PASS] Logo hover pause
+[PASS] Budget optional in form
+[PASS] Service preselection event
+[PASS] Exact service anchors
+[PASS] Social platforms
+[PASS] Resend variables referenced
+[PASS] No exposed real Resend key
+[PASS] Anti-spam basics
+[PASS] Legacy section redirects
+[PASS] Nine service categories — 9
+[PASS] Four social profiles — 4
+[PASS] Transparent logo — (0, 255)
+[PASS] High-resolution logo — (768, 768)
+[PASS] Quality scripts
+[PASS] Node engine declared
+[PASS] All local imports resolve — []
+
+Additional review completed:
+- TypeScript/TSX strict syntax and internal typing checked with local declaration stubs.
+- Service-card nested interactive control issue removed.
+- Keyboard, focus, mobile, and reduced-motion behavior reviewed.
+- Contact API validates allowed services and arrangements.
+- API request-size, content-type, same-site, honeypot, and form-timing checks added.
+- No private API key is included in the project.
+
+Environment limitation:
+- A full Next.js npm build was not executed in this environment because npm registry access is unavailable.
+- Run `npm run check` locally before pushing to GitHub; this performs lint, typecheck, and production build.

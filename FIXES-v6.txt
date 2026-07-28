@@ -1,0 +1,18 @@
+VAPerforma Website Fixed v6
+
+LOGO
+- Uses the exact VA artwork supplied by the client.
+- Correct square proportions; no horizontal stretching.
+- VA mark rotates continuously around the vertical axis.
+- Globe inside PERFORMA also rotates continuously.
+- Hover no longer pauses either animation.
+- Rotation remains enabled even when reduced-motion is active.
+- Browser icon updated to the exact mark.
+
+SERVICES
+- Cards no longer expand inside the grid.
+- View Details opens a centered modal popup.
+- Book a Session is a standard direct link.
+- The selected service is passed through the URL and preselected in the form.
+- Equal row heights and bottom-aligned action buttons.
+- Opening service details no longer pushes neighboring cards out of alignment.

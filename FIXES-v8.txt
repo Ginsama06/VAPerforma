@@ -1,0 +1,18 @@
+VAPerforma Website Fixed v8
+
+FORM
+- Estimated monthly budget is the only optional form field.
+- Telephone number is required.
+- Preferred start date is required.
+- Referral source is required.
+- Server-side API validation matches the browser requirements.
+- Removed the duplicate Facebook referral option.
+
+WHY VAPERFORMA
+- Cards no longer redirect to another section.
+- Clicking or tapping a card expands it in place.
+- Only one card expands at a time.
+- Expanded cards reveal detailed process information, included items, and an expected result.
+- Smooth expansion, glow, icon, and chevron animations are included.
+- Clicking the active card again collapses it.
+- Keyboard and screen-reader states are supported.

@@ -1,0 +1,17 @@
+VAPerforma v4 website fixes
+
+Fixed:
+- Replaced the blurry raster VA logo with a crisp inline SVG logo.
+- View Details now uses native HTML <details>/<summary>.
+- Book a Session now uses a normal URL link.
+- The selected service is provided by the server and appears preselected.
+- How It Works uses native expandable cards.
+- Service strip links use standard anchors.
+- Added the reported local network origin to allowedDevOrigins.
+- Kept the Resend email API and optional budget field unchanged.
+
+Important:
+Book a Session links now use:
+  /?service=<service-slug>#get-started
+
+This remains functional even before React client-side hydration completes.
