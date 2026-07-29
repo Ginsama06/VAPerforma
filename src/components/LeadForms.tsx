@@ -18,11 +18,78 @@ type LeadFormsProps = {
   initialService?: string;
 };
 
+type IntlWithSupportedValues = typeof Intl & {
+  supportedValuesOf?: (key: "timeZone") => string[];
+};
+
+const fallbackTimeZones = [
+  "UTC",
+  "Pacific/Honolulu",
+  "America/Anchorage",
+  "America/Los_Angeles",
+  "America/Denver",
+  "America/Chicago",
+  "America/New_York",
+  "America/Halifax",
+  "America/Sao_Paulo",
+  "Atlantic/Azores",
+  "Europe/London",
+  "Europe/Paris",
+  "Europe/Berlin",
+  "Europe/Athens",
+  "Europe/Moscow",
+  "Africa/Cairo",
+  "Africa/Johannesburg",
+  "Asia/Dubai",
+  "Asia/Karachi",
+  "Asia/Kolkata",
+  "Asia/Dhaka",
+  "Asia/Bangkok",
+  "Asia/Singapore",
+  "Asia/Manila",
+  "Asia/Hong_Kong",
+  "Asia/Shanghai",
+  "Asia/Tokyo",
+  "Asia/Seoul",
+  "Australia/Perth",
+  "Australia/Adelaide",
+  "Australia/Sydney",
+  "Pacific/Auckland"
+];
+
 function dateInputValue(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function detectTimeZone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  } catch {
+    return "UTC";
+  }
+}
+
+function getGlobalTimeZones(detectedTimeZone: string): string[] {
+  try {
+    const supported =
+      (Intl as IntlWithSupportedValues).supportedValuesOf?.("timeZone") ||
+      fallbackTimeZones;
+
+    return Array.from(
+      new Set(["UTC", detectedTimeZone, "Asia/Manila", ...supported])
+    ).sort((a, b) => a.localeCompare(b));
+  } catch {
+    return Array.from(
+      new Set(["UTC", detectedTimeZone, ...fallbackTimeZones])
+    ).sort((a, b) => a.localeCompare(b));
+  }
+}
+
+function timeZoneLabel(timeZone: string): string {
+  return timeZone.replaceAll("_", " ");
 }
 
 export default function LeadForms({
@@ -36,21 +103,25 @@ export default function LeadForms({
     ? initialService
     : "";
 
+  const detectedTimeZone = useMemo(() => detectTimeZone(), []);
+  const globalTimeZones = useMemo(
+    () => getGlobalTimeZones(detectedTimeZone),
+    [detectedTimeZone]
+  );
+
   const [selectedService, setSelectedService] = useState(
     normalizedInitialService
   );
+  const [scheduleDiscoveryCall, setScheduleDiscoveryCall] =
+    useState(true);
   const [discoveryDate, setDiscoveryDate] = useState("");
   const [discoveryTime, setDiscoveryTime] = useState("");
+  const [selectedTimeZone, setSelectedTimeZone] =
+    useState(detectedTimeZone);
   const [formStartedAt, setFormStartedAt] = useState(() =>
     Date.now().toString()
   );
-  const [clientTimeZone] = useState(() => {
-    try {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-    } catch {
-      return "UTC";
-    }
-  });
+
   const serviceRef = useRef<HTMLSelectElement>(null);
   const statusRef = useRef<HTMLParagraphElement>(null);
 
@@ -65,18 +136,6 @@ export default function LeadForms({
     };
   }, []);
 
-  const discoveryCallStartUtc = useMemo(() => {
-    if (!discoveryDate || !discoveryTime) return "";
-
-    const localDateTime = new Date(
-      `${discoveryDate}T${discoveryTime}:00`
-    );
-
-    return Number.isNaN(localDateTime.getTime())
-      ? ""
-      : localDateTime.toISOString();
-  }, [discoveryDate, discoveryTime]);
-
   useEffect(() => {
     if (message) {
       statusRef.current?.focus({ preventScroll: true });
@@ -88,9 +147,14 @@ export default function LeadForms({
 
     if (status === "sending") return;
 
-    if (!discoveryCallStartUtc) {
+    if (
+      scheduleDiscoveryCall &&
+      (!discoveryDate || !discoveryTime || !selectedTimeZone)
+    ) {
       setStatus("error");
-      setMessage("Please choose a valid discovery-call date and time.");
+      setMessage(
+        "Choose a Discovery Call date, time, and timezone, or turn off the optional Discovery Call."
+      );
       return;
     }
 
@@ -113,6 +177,7 @@ export default function LeadForms({
       const result = (await response.json()) as {
         success?: boolean;
         message?: string;
+        discoveryCallScheduled?: boolean;
       };
 
       if (!response.ok || !result.success) {
@@ -121,12 +186,16 @@ export default function LeadForms({
 
       form.reset();
       setSelectedService("");
+      setScheduleDiscoveryCall(true);
       setDiscoveryDate("");
       setDiscoveryTime("");
+      setSelectedTimeZone(detectedTimeZone);
       setFormStartedAt(Date.now().toString());
       setStatus("success");
       setMessage(
-        "Your inquiry was sent and your 15-minute Discovery Call was added to the VA Performa calendar."
+        result.discoveryCallScheduled
+          ? "Your inquiry was sent and an UNCLAIMED 15-minute Discovery Call was added to the VA Performa calendar."
+          : "Your inquiry was sent successfully. The VA Performa team can contact you to arrange a Discovery Call later."
       );
 
       const url = new URL(window.location.href);
@@ -296,66 +365,108 @@ export default function LeadForms({
 
         <fieldset className="discovery-scheduler sm:col-span-2">
           <legend className="px-2 text-lg font-medium text-[#092b30]">
-            Schedule your 15-minute Discovery Call
+            15-minute Discovery Call{" "}
+            <span className="text-sm font-medium text-[#819596]">
+              (optional)
+            </span>
           </legend>
 
-          <p className="mt-1 text-sm leading-6 text-[#587074]">
-            Choose a date and a 15-minute time slot. Times below use your
-            device timezone: <strong>{clientTimeZone}</strong>.
-          </p>
+          <label className="mt-2 flex cursor-pointer items-start gap-3 rounded-2xl border border-[#b7e4d9] bg-white/80 px-4 py-4 text-sm leading-6 text-[#29484b]">
+            <input
+              className="mt-1 h-4 w-4 accent-[#20aaa6]"
+              type="checkbox"
+              name="scheduleDiscoveryCall"
+              value="yes"
+              checked={scheduleDiscoveryCall}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setScheduleDiscoveryCall(event.target.checked)
+              }
+            />
+            <span>
+              <strong>Schedule a Discovery Call now.</strong>{" "}
+              Turn this off to submit an inquiry without choosing a meeting
+              time.
+            </span>
+          </label>
 
-          <div className="mt-5 grid gap-5 sm:grid-cols-2">
-            <label className="form-label">
-              Discovery Call date
-              <input
-                className="form-field mt-2"
-                name="discoveryCallDate"
-                type="date"
-                value={discoveryDate}
-                min={dateLimits.min}
-                max={dateLimits.max}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setDiscoveryDate(event.target.value)
-                }
-                required
-              />
-            </label>
+          {scheduleDiscoveryCall ? (
+            <>
+              <p className="mt-4 text-sm leading-6 text-[#587074]">
+                Choose any starting minute and select the timezone where
+                you want the time interpreted. The call will last exactly
+                15 minutes.
+              </p>
 
-            <label className="form-label">
-              Discovery Call time
-              <input
-                className="form-field mt-2"
-                name="discoveryCallTime"
-                type="time"
-                value={discoveryTime}
-                step={900}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setDiscoveryTime(event.target.value)
-                }
-                required
-              />
-            </label>
-          </div>
+              <div className="mt-5 grid gap-5 md:grid-cols-3">
+                <label className="form-label">
+                  Discovery Call date
+                  <input
+                    className="form-field mt-2"
+                    name="discoveryCallDate"
+                    type="date"
+                    value={discoveryDate}
+                    min={dateLimits.min}
+                    max={dateLimits.max}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setDiscoveryDate(event.target.value)
+                    }
+                    required
+                  />
+                </label>
 
-          <div className="mt-4 rounded-2xl border border-[#b7e4d9] bg-white/80 px-4 py-3 text-sm leading-6 text-[#356164]">
-            The selected slot will be checked against the VA Performa business
-            calendar when you submit. If another person already booked it,
-            you will be asked to choose a different time.
-          </div>
+                <label className="form-label">
+                  Discovery Call time
+                  <input
+                    className="form-field mt-2"
+                    name="discoveryCallTime"
+                    type="time"
+                    value={discoveryTime}
+                    step={60}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setDiscoveryTime(event.target.value)
+                    }
+                    required
+                  />
+                </label>
+
+                <label className="form-label">
+                  Timezone
+                  <select
+                    className="form-field mt-2"
+                    name="discoveryCallTimeZone"
+                    value={selectedTimeZone}
+                    onChange={(event: ChangeEvent<HTMLSelectElement>) =>
+                      setSelectedTimeZone(event.target.value)
+                    }
+                    required
+                  >
+                    {globalTimeZones.map((timeZone) => (
+                      <option key={timeZone} value={timeZone}>
+                        {timeZoneLabel(timeZone)}
+                        {timeZone === detectedTimeZone
+                          ? " — detected"
+                          : ""}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-[#b7e4d9] bg-white/80 px-4 py-3 text-sm leading-6 text-[#356164]">
+                Your booking will be created as a separate{" "}
+                <strong>UNCLAIMED</strong> event in the shared VA Performa
+                Calendar. Staff members can open the Calendar and claim it
+                manually. Multiple clients may select the same or
+                overlapping time.
+              </div>
+            </>
+          ) : (
+            <div className="mt-4 rounded-2xl border border-[#d7ece6] bg-white/70 px-4 py-3 text-sm leading-6 text-[#587074]">
+              No Calendar event will be created. Your inquiry will still be
+              emailed to the VA Performa team.
+            </div>
+          )}
         </fieldset>
-
-        <input
-          type="hidden"
-          name="discoveryCallStartUtc"
-          value={discoveryCallStartUtc}
-          readOnly
-        />
-        <input
-          type="hidden"
-          name="discoveryCallTimeZone"
-          value={clientTimeZone}
-          readOnly
-        />
 
         <label className="form-label sm:col-span-2">
           Responsibilities and required skills
@@ -426,7 +537,7 @@ export default function LeadForms({
         />
         <span>
           I agree to be contacted by VA Performa regarding this business
-          inquiry and Discovery Call.
+          inquiry and, when selected, the optional Discovery Call.
         </span>
       </label>
 
@@ -436,8 +547,12 @@ export default function LeadForms({
         className="brand-button mt-7 w-full rounded-2xl px-5 py-4 disabled:cursor-not-allowed disabled:opacity-65"
       >
         {status === "sending"
-          ? "Checking Calendar..."
-          : "Submit Inquiry & Schedule Discovery Call"}
+          ? scheduleDiscoveryCall
+            ? "Adding to Calendar..."
+            : "Sending Inquiry..."
+          : scheduleDiscoveryCall
+            ? "Submit Inquiry & Schedule Discovery Call"
+            : "Submit Inquiry"}
       </button>
 
       {message && (

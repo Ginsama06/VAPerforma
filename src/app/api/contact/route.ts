@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { reserveDiscoveryCall } from "@/lib/googleCalendar";
+import { createDiscoveryCall } from "@/lib/googleCalendar";
 import { services } from "@/data/site";
 
 export const runtime = "nodejs";
@@ -44,15 +44,24 @@ type ClientInquiry = {
   arrangement?: unknown;
   startDate?: unknown;
   budget?: unknown;
+  scheduleDiscoveryCall?: unknown;
   discoveryCallDate?: unknown;
   discoveryCallTime?: unknown;
-  discoveryCallStartUtc?: unknown;
   discoveryCallTimeZone?: unknown;
   requirements?: unknown;
   referralSource?: unknown;
   website?: unknown;
   formStartedAt?: unknown;
   consent?: unknown;
+};
+
+type DateParts = {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  second: number;
 };
 
 function json(
@@ -89,8 +98,18 @@ function validEmail(email: string): boolean {
 function validRequiredDate(date: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
 
-  const parsed = new Date(`${date}T00:00:00`);
-  return !Number.isNaN(parsed.getTime());
+  const [year, month, day] = date.split("-").map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+
+  return (
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() === month - 1 &&
+    parsed.getUTCDate() === day
+  );
+}
+
+function validTime(time: string): boolean {
+  return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time);
 }
 
 function validTimeZone(timeZone: string): boolean {
@@ -112,18 +131,116 @@ function getPositiveNumber(
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-function parseDiscoveryCallStart(value: string): Date | null {
-  const parsed = new Date(value);
+function getPartsInTimeZone(
+  date: Date,
+  timeZone: string
+): DateParts {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  });
 
+  const values = Object.fromEntries(
+    formatter
+      .formatToParts(date)
+      .filter((part) => part.type !== "literal")
+      .map((part) => [part.type, Number(part.value)])
+  );
+
+  return {
+    year: values.year,
+    month: values.month,
+    day: values.day,
+    hour: values.hour,
+    minute: values.minute,
+    second: values.second
+  };
+}
+
+function partsAsUtc(parts: DateParts): number {
+  return Date.UTC(
+    parts.year,
+    parts.month - 1,
+    parts.day,
+    parts.hour,
+    parts.minute,
+    parts.second
+  );
+}
+
+function localDateTimeToUtc(
+  dateText: string,
+  timeText: string,
+  timeZone: string
+): Date | null {
   if (
-    !value ||
-    Number.isNaN(parsed.getTime()) ||
-    parsed.getUTCSeconds() !== 0 ||
-    parsed.getUTCMilliseconds() !== 0 ||
-    parsed.getUTCMinutes() % 15 !== 0
+    !validRequiredDate(dateText) ||
+    !validTime(timeText) ||
+    !validTimeZone(timeZone)
   ) {
     return null;
   }
+
+  const [year, month, day] = dateText.split("-").map(Number);
+  const [hour, minute] = timeText.split(":").map(Number);
+  const targetParts: DateParts = {
+    year,
+    month,
+    day,
+    hour,
+    minute,
+    second: 0
+  };
+  const targetAsUtc = partsAsUtc(targetParts);
+
+  let candidateMs = targetAsUtc;
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const displayedParts = getPartsInTimeZone(
+      new Date(candidateMs),
+      timeZone
+    );
+    const offsetMs = partsAsUtc(displayedParts) - candidateMs;
+    const nextCandidate = targetAsUtc - offsetMs;
+
+    if (nextCandidate === candidateMs) break;
+    candidateMs = nextCandidate;
+  }
+
+  const candidate = new Date(candidateMs);
+  const verified = getPartsInTimeZone(candidate, timeZone);
+
+  if (
+    verified.year !== year ||
+    verified.month !== month ||
+    verified.day !== day ||
+    verified.hour !== hour ||
+    verified.minute !== minute
+  ) {
+    return null;
+  }
+
+  return candidate;
+}
+
+function parseDiscoveryCallStart(
+  dateText: string,
+  timeText: string,
+  timeZone: string
+): Date | null {
+  const parsed = localDateTimeToUtc(
+    dateText,
+    timeText,
+    timeZone
+  );
+
+  if (!parsed) return null;
 
   const minNoticeHours = getPositiveNumber(
     process.env.DISCOVERY_CALL_MIN_NOTICE_HOURS,
@@ -190,7 +307,8 @@ export async function POST(request: Request) {
       return json(
         {
           success: false,
-          message: "The inquiry is too large. Please shorten the details."
+          message:
+            "The inquiry is too large. Please shorten the details."
         },
         413
       );
@@ -223,22 +341,26 @@ export async function POST(request: Request) {
     const arrangement = getText(body.arrangement, 100);
     const startDate = getText(body.startDate, 30);
     const budget = getText(body.budget, 80);
-    const discoveryCallDate = getText(body.discoveryCallDate, 30);
-    const discoveryCallTime = getText(body.discoveryCallTime, 20);
-    const discoveryCallStartUtc = getText(
-      body.discoveryCallStartUtc,
-      50
+    const scheduleDiscoveryCall =
+      getText(body.scheduleDiscoveryCall, 10) === "yes";
+    const discoveryCallDate = getText(
+      body.discoveryCallDate,
+      30
+    );
+    const discoveryCallTime = getText(
+      body.discoveryCallTime,
+      20
     );
     const discoveryCallTimeZone = getText(
       body.discoveryCallTimeZone,
       100
     );
     const requirements = getText(body.requirements, 5000);
-    const referralSource = getText(body.referralSource, 100);
-    const consent = getText(body.consent, 10);
-    const discoveryCallStart = parseDiscoveryCallStart(
-      discoveryCallStartUtc
+    const referralSource = getText(
+      body.referralSource,
+      100
     );
+    const consent = getText(body.consent, 10);
 
     if (
       fullName.length < 2 ||
@@ -248,10 +370,6 @@ export async function POST(request: Request) {
       !allowedServices.has(service) ||
       !allowedArrangements.has(arrangement) ||
       !validRequiredDate(startDate) ||
-      !validRequiredDate(discoveryCallDate) ||
-      !/^\d{2}:\d{2}$/.test(discoveryCallTime) ||
-      !discoveryCallStart ||
-      !validTimeZone(discoveryCallTimeZone) ||
       !allowedReferralSources.has(referralSource) ||
       requirements.length < 20 ||
       consent !== "yes"
@@ -259,11 +377,31 @@ export async function POST(request: Request) {
       return json(
         {
           success: false,
-          message:
-            "Please complete all required fields and choose a valid 15-minute Discovery Call time at least two hours from now."
+          message: "Please complete all required inquiry fields."
         },
         400
       );
+    }
+
+    let discoveryCallStart: Date | null = null;
+
+    if (scheduleDiscoveryCall) {
+      discoveryCallStart = parseDiscoveryCallStart(
+        discoveryCallDate,
+        discoveryCallTime,
+        discoveryCallTimeZone
+      );
+
+      if (!discoveryCallStart) {
+        return json(
+          {
+            success: false,
+            message:
+              "Choose a valid Discovery Call date, time, and timezone at least two hours from now."
+          },
+          400
+        );
+      }
     }
 
     const apiKey = process.env.RESEND_API_KEY;
@@ -271,7 +409,9 @@ export async function POST(request: Request) {
     const fromEmail = process.env.RESEND_FROM_EMAIL;
 
     if (!apiKey || !businessEmail || !fromEmail) {
-      console.error("Missing VA Performa email environment variables.");
+      console.error(
+        "Missing VA Performa email environment variables."
+      );
       return json(
         {
           success: false,
@@ -284,63 +424,62 @@ export async function POST(request: Request) {
 
     const submissionId = crypto.randomUUID();
     const submittedAt = new Date().toISOString();
-    const discoveryCallEnd = new Date(
-      discoveryCallStart.getTime() + DISCOVERY_CALL_DURATION_MS
-    );
     const businessTimeZone =
       process.env.BUSINESS_TIME_ZONE?.trim() ||
       DEFAULT_BUSINESS_TIME_ZONE;
-    const clientLocalTime = formatInTimeZone(
-      discoveryCallStart,
-      discoveryCallTimeZone
-    );
-    const businessLocalTime = formatInTimeZone(
-      discoveryCallStart,
-      businessTimeZone
-    );
 
-    let calendarReservation;
+    let calendarReservation:
+      | Awaited<ReturnType<typeof createDiscoveryCall>>
+      | null = null;
+    let clientLocalTime = "";
+    let businessLocalTime = "";
 
-    try {
-      calendarReservation = await reserveDiscoveryCall({
-        submissionId,
-        fullName,
-        email,
-        company,
-        phone,
-        service,
-        arrangement,
-        requirements,
-        start: discoveryCallStart,
-        end: discoveryCallEnd,
-        clientTimeZone: discoveryCallTimeZone,
-        clientLocalTime,
-        businessLocalTime
-      });
-    } catch (error) {
-      console.error(
-        "Discovery Call calendar booking failed:",
-        error instanceof Error ? error.message : "Unknown error"
+    if (scheduleDiscoveryCall && discoveryCallStart) {
+      const discoveryCallEnd = new Date(
+        discoveryCallStart.getTime() +
+          DISCOVERY_CALL_DURATION_MS
       );
-      return json(
-        {
-          success: false,
-          message:
-            "The Discovery Call calendar is temporarily unavailable. Please try again shortly."
-        },
-        502
+      clientLocalTime = formatInTimeZone(
+        discoveryCallStart,
+        discoveryCallTimeZone
       );
-    }
+      businessLocalTime = formatInTimeZone(
+        discoveryCallStart,
+        businessTimeZone
+      );
 
-    if (!calendarReservation.success) {
-      return json(
-        {
-          success: false,
-          message:
-            "That 15-minute time slot is no longer available. Please choose another date or time."
-        },
-        409
-      );
+      try {
+        calendarReservation = await createDiscoveryCall({
+          submissionId,
+          fullName,
+          email,
+          company,
+          phone,
+          service,
+          arrangement,
+          requirements,
+          start: discoveryCallStart,
+          end: discoveryCallEnd,
+          clientTimeZone: discoveryCallTimeZone,
+          clientLocalTime,
+          businessLocalTime
+        });
+      } catch (error) {
+        console.error(
+          "Discovery Call calendar creation failed:",
+          error instanceof Error
+            ? error.message
+            : "Unknown error"
+        );
+        return json(
+          {
+            success: false,
+            message:
+              "The Discovery Call calendar is temporarily unavailable. Turn off the optional Discovery Call to send the inquiry without scheduling, or try again shortly."
+          },
+          502
+        );
+      }
     }
 
     const resend = new Resend(apiKey);
@@ -348,26 +487,72 @@ export async function POST(request: Request) {
       "\n",
       "<br />"
     );
-    const calendarLink = calendarReservation.eventLink;
+    const calendarLink =
+      calendarReservation?.eventLink || "";
+    const emailHeading = scheduleDiscoveryCall
+      ? "UNCLAIMED Discovery Call received"
+      : "New client inquiry";
+    const subject = scheduleDiscoveryCall
+      ? `UNCLAIMED Discovery Call — ${sanitizeHeader(fullName)} — ${sanitizeHeader(service)}`
+      : `New client inquiry — ${sanitizeHeader(fullName)} — ${sanitizeHeader(service)}`;
+
+    const calendarText = scheduleDiscoveryCall
+      ? [
+          "Discovery Call status: UNCLAIMED",
+          `Calendar event ID: ${calendarReservation?.eventId || ""}`,
+          calendarLink
+            ? `Calendar event: ${calendarLink}`
+            : "",
+          "",
+          "Discovery Call duration: 15 minutes",
+          `Client local time: ${clientLocalTime}`,
+          `Client timezone: ${discoveryCallTimeZone}`,
+          `Business local time: ${businessLocalTime}`,
+          `Business timezone: ${businessTimeZone}`,
+          "",
+          "Staff action: Open the shared Calendar and replace UNCLAIMED in the event title with CLAIMED BY [STAFF NAME].",
+          ""
+        ]
+      : [
+          "Discovery Call: Not scheduled",
+          "Staff may contact the client to arrange a time later.",
+          ""
+        ];
+
+    const calendarHtml = scheduleDiscoveryCall
+      ? `
+        <div style="background:#effaf6;border:1px solid #b7e4d9;border-radius:16px;padding:18px;margin-bottom:22px">
+          <p style="margin:0 0 7px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0b7472">UNCLAIMED — 15-minute Discovery Call</p>
+          <p style="margin:0;font-size:18px;font-weight:800">${escapeHtml(businessLocalTime)}</p>
+          <p style="margin:7px 0 0;color:#587074">Client time: ${escapeHtml(clientLocalTime)} (${escapeHtml(discoveryCallTimeZone)})</p>
+          <p style="margin:9px 0 0;color:#587074">To claim: change UNCLAIMED in the Calendar event title to CLAIMED BY [STAFF NAME].</p>
+          ${
+            calendarLink
+              ? `<p style="margin:13px 0 0"><a href="${escapeHtml(calendarLink)}" style="color:#0b7472;font-weight:700">Open Google Calendar event</a></p>`
+              : ""
+          }
+        </div>
+      `
+      : `
+        <div style="background:#f4fbf8;border:1px solid #d7ece6;border-radius:16px;padding:18px;margin-bottom:22px">
+          <p style="margin:0 0 7px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0b7472">Discovery Call</p>
+          <p style="margin:0;color:#587074">Not scheduled. Contact the client to arrange a time later.</p>
+        </div>
+      `;
 
     const { error } = await resend.emails.send({
       from: fromEmail,
       to: [businessEmail],
       replyTo: email,
-      subject: `Discovery Call booked — ${sanitizeHeader(fullName)} — ${sanitizeHeader(service)}`,
+      subject,
       text: [
-        "New VA Performa client inquiry and Discovery Call booking",
+        scheduleDiscoveryCall
+          ? "New VA Performa inquiry with an UNCLAIMED Discovery Call"
+          : "New VA Performa client inquiry",
         `Submission ID: ${submissionId}`,
         `Submitted: ${submittedAt}`,
-        `Calendar event ID: ${calendarReservation.eventId}`,
-        calendarLink ? `Calendar event: ${calendarLink}` : "",
         "",
-        `Discovery Call duration: 15 minutes`,
-        `Client local time: ${clientLocalTime}`,
-        `Client timezone: ${discoveryCallTimeZone}`,
-        `Business local time: ${businessLocalTime}`,
-        `Business timezone: ${businessTimeZone}`,
-        "",
+        ...calendarText,
         `Name: ${fullName}`,
         `Email: ${email}`,
         `Company: ${company}`,
@@ -385,19 +570,10 @@ export async function POST(request: Request) {
         <div style="font-family:Arial,sans-serif;max-width:720px;margin:auto;color:#092b30">
           <div style="background:linear-gradient(135deg,#159b98,#72d28c,#dce45a);color:#092b30;padding:26px;border-radius:18px 18px 0 0">
             <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">VA Performa website</p>
-            <h1 style="margin:0;font-size:25px">Discovery Call booked</h1>
+            <h1 style="margin:0;font-size:25px">${emailHeading}</h1>
           </div>
           <div style="border:1px solid #d7ece6;border-top:0;padding:26px;border-radius:0 0 18px 18px">
-            <div style="background:#effaf6;border:1px solid #b7e4d9;border-radius:16px;padding:18px;margin-bottom:22px">
-              <p style="margin:0 0 7px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0b7472">15-minute Discovery Call</p>
-              <p style="margin:0;font-size:18px;font-weight:800">${escapeHtml(businessLocalTime)}</p>
-              <p style="margin:7px 0 0;color:#587074">Client time: ${escapeHtml(clientLocalTime)} (${escapeHtml(discoveryCallTimeZone)})</p>
-              ${
-                calendarLink
-                  ? `<p style="margin:13px 0 0"><a href="${escapeHtml(calendarLink)}" style="color:#0b7472;font-weight:700">Open Google Calendar event</a></p>`
-                  : ""
-              }
-            </div>
+            ${calendarHtml}
             <p style="margin-top:0;color:#587074;font-size:13px">
               Submission ID: ${escapeHtml(submissionId)}<br />
               Submitted: ${escapeHtml(submittedAt)}
@@ -418,7 +594,7 @@ export async function POST(request: Request) {
             <h2 style="margin:26px 0 10px;font-size:18px">Responsibilities and required skills</h2>
             <div style="line-height:1.75;background:#f4fbf8;border:1px solid #d7ece6;border-radius:14px;padding:18px">${safeRequirements}</div>
             <p style="margin:22px 0 0;color:#587074;font-size:13px">
-              The Discovery Call has already been inserted into the VA Performa Google Calendar. Reply to this email to contact the client.
+              Reply to this email to contact the client.
             </p>
           </div>
         </div>
@@ -430,14 +606,18 @@ export async function POST(request: Request) {
       return json(
         {
           success: false,
-          message:
-            "Your Discovery Call was scheduled, but the notification email could not be delivered. Please contact VA Performa directly before submitting again."
+          message: scheduleDiscoveryCall
+            ? "The Calendar event was created, but the notification email could not be delivered. Please contact VA Performa directly before submitting again."
+            : "The inquiry could not be delivered. Please contact VA Performa directly."
         },
         502
       );
     }
 
-    return json({ success: true });
+    return json({
+      success: true,
+      discoveryCallScheduled: scheduleDiscoveryCall
+    });
   } catch {
     return json(
       {

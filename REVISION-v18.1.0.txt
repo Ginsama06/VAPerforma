@@ -1,0 +1,24 @@
+VA Performa Website v18.1.0
+
+BUSINESS EMAIL
+- Added a dedicated Contact section to the website footer.
+- Displays the official business email:
+  bspartners.vaperforma@gmail.com
+- The email is clickable and opens the visitor's email application.
+- Added a short explanation that it is for service inquiries,
+  Discovery Calls, and business concerns.
+- The footer was rebalanced into four responsive columns:
+  brand, navigation, contact, and social media.
+
+VERSIONING
+- Started semantic-style project versioning at v18.1.0.
+- package.json and package-lock.json now use version 18.1.0.
+
+RETAINED FROM v18 MINOR
+- Official transparent logo
+- Optional Discovery Call
+- Any-minute booking
+- Global timezone selector
+- Multiple overlapping UNCLAIMED Calendar events
+- Manual staff claiming through Google Calendar
+- Resend inquiry-email integration

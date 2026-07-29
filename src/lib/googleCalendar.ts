@@ -2,10 +2,8 @@ import { createSign } from "node:crypto";
 
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const GOOGLE_CALENDAR_API = "https://www.googleapis.com/calendar/v3";
-const CALENDAR_SCOPES = [
-  "https://www.googleapis.com/auth/calendar.events",
-  "https://www.googleapis.com/auth/calendar.freebusy"
-].join(" ");
+const CALENDAR_SCOPES =
+  "https://www.googleapis.com/auth/calendar.events";
 
 let cachedAccessToken = "";
 let cachedAccessTokenExpiresAt = 0;
@@ -26,16 +24,11 @@ type DiscoveryCallBooking = {
   businessLocalTime: string;
 };
 
-export type CalendarReservation =
-  | {
-      success: true;
-      eventId: string;
-      eventLink: string;
-    }
-  | {
-      success: false;
-      reason: "busy";
-    };
+export type CalendarReservation = {
+  success: true;
+  eventId: string;
+  eventLink: string;
+};
 
 function encodeBase64Url(value: string | Buffer): string {
   return Buffer.from(value)
@@ -180,43 +173,12 @@ async function googleCalendarRequest<T>(
   return result;
 }
 
-export async function reserveDiscoveryCall(
+export async function createDiscoveryCall(
   booking: DiscoveryCallBooking
 ): Promise<CalendarReservation> {
   const { calendarId } = getCalendarConfiguration();
   const timeMin = booking.start.toISOString();
   const timeMax = booking.end.toISOString();
-
-  const freeBusy = await googleCalendarRequest<{
-    calendars?: Record<
-      string,
-      {
-        busy?: Array<{ start?: string; end?: string }>;
-        errors?: Array<{ reason?: string }>;
-      }
-    >;
-  }>(`${GOOGLE_CALENDAR_API}/freeBusy`, {
-    method: "POST",
-    body: JSON.stringify({
-      timeMin,
-      timeMax,
-      items: [{ id: calendarId }]
-    })
-  });
-
-  const calendarStatus = freeBusy.calendars?.[calendarId];
-
-  if (calendarStatus?.errors?.length) {
-    console.error(
-      "Google Calendar free/busy error:",
-      calendarStatus.errors.map((error) => error.reason).join(", ")
-    );
-    throw new Error("The business calendar could not be checked.");
-  }
-
-  if ((calendarStatus?.busy?.length || 0) > 0) {
-    return { success: false, reason: "busy" };
-  }
 
   const event = await googleCalendarRequest<{
     id?: string;
@@ -228,8 +190,12 @@ export async function reserveDiscoveryCall(
     {
       method: "POST",
       body: JSON.stringify({
-        summary: `VA Performa Discovery Call — ${booking.fullName}`,
+        summary:
+          `UNCLAIMED — VA Performa Discovery Call — ${booking.fullName}`,
         description: [
+          "STATUS: UNCLAIMED",
+          "To claim this call, replace UNCLAIMED in the event title with CLAIMED BY [STAFF NAME].",
+          "",
           "15-minute VA Performa Discovery Call",
           "",
           `Submission ID: ${booking.submissionId}`,
@@ -250,11 +216,13 @@ export async function reserveDiscoveryCall(
         start: { dateTime: timeMin },
         end: { dateTime: timeMax },
         visibility: "private",
+        transparency: "opaque",
         reminders: { useDefault: true },
         extendedProperties: {
           private: {
-            vaperformaSubmissionId: booking.submissionId,
-            clientEmail: booking.email
+            vaPerformaSubmissionId: booking.submissionId,
+            clientEmail: booking.email,
+            claimStatus: "unclaimed"
           }
         }
       })

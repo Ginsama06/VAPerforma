@@ -25,8 +25,8 @@ export default function BrandMark({
         <Image
           src="/vaperforma-va-mark.png"
           alt=""
-          width={1626}
-                  height={1626}
+          width={1046}
+          height={1046}
           priority={priority}
           sizes={
             size === "hero"

@@ -4,7 +4,7 @@ import { socialLinks } from "@/data/site";
 export default function SiteFooter() {
   return (
     <footer className="bg-[#061f23] text-white">
-      <div className="section-container grid gap-12 py-16 lg:grid-cols-[1.5fr_0.7fr_0.8fr]">
+      <div className="section-container grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-[1.45fr_0.65fr_1fr_0.75fr]">
         <div>
           <a
             href="#home"
@@ -46,6 +46,29 @@ export default function SiteFooter() {
               Get Started
             </a>
           </nav>
+        </div>
+
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#7fa9a3]">
+            Contact
+          </p>
+
+          <div className="mt-5">
+            <p className="text-sm leading-6 text-[#9fbdb8]">
+              Business inquiries
+            </p>
+
+            <a
+              href="mailto:bspartners.vaperforma@gmail.com"
+              className="mt-2 block break-all text-sm font-semibold leading-6 text-[#dce45a] transition hover:text-white focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#2fc4c1]/30"
+            >
+              bspartners.vaperforma@gmail.com
+            </a>
+
+            <p className="mt-3 text-xs leading-5 text-[#7fa9a3]">
+              For service inquiries, Discovery Calls, and business concerns.
+            </p>
+          </div>
         </div>
 
         <div>
