@@ -194,7 +194,7 @@ export default function LeadForms({
       setStatus("success");
       setMessage(
         result.discoveryCallScheduled
-          ? "Your inquiry was sent and an UNCLAIMED 15-minute Discovery Call was added to the VA Performa calendar."
+          ? "Your inquiry was sent successfully. Your preferred Discovery Call schedule has been received, and our team will contact you to confirm it."
           : "Your inquiry was sent successfully. The VA Performa team can contact you to arrange a Discovery Call later."
       );
 
@@ -453,11 +453,9 @@ export default function LeadForms({
               </div>
 
               <div className="mt-4 rounded-2xl border border-[#b7e4d9] bg-white/80 px-4 py-3 text-sm leading-6 text-[#356164]">
-                Your booking will be created as a separate{" "}
-                <strong>UNCLAIMED</strong> event in the shared VA Performa
-                Calendar. Staff members can open the Calendar and claim it
-                manually. Multiple clients may select the same or
-                overlapping time.
+                Choose your preferred date, time, and timezone. Our team will
+                review your request and contact you to confirm the 15-minute
+                Discovery Call.
               </div>
             </>
           ) : (

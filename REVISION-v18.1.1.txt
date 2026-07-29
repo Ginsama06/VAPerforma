@@ -1,0 +1,20 @@
+VA Performa Website v18.1.1
+
+PUBLIC DISCOVERY CALL MESSAGING
+- Removed every client-facing reference to UNCLAIMED events.
+- Removed the internal explanation about shared Calendar claiming and
+  overlapping bookings from the public form.
+- Public form message now says:
+  "Choose your preferred date, time, and timezone. Our team will review
+  your request and contact you to confirm the 15-minute Discovery Call."
+- Public success message now says:
+  "Your inquiry was sent successfully. Your preferred Discovery Call
+  schedule has been received, and our team will contact you to confirm it."
+
+INTERNAL WORKFLOW
+- UNCLAIMED remains only inside the private Google Calendar event and
+  the internal business notification email.
+- Manual staff claiming and simultaneous bookings remain functional.
+
+VERSION
+- Updated project version to 18.1.1.
