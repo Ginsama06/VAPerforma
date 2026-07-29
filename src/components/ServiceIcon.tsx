@@ -2,6 +2,7 @@ import {
   CalendarIcon,
   CustomerOperationsIcon,
   DataEntryIcon,
+  DentalIcon,
   ExecutiveIcon,
   HealthcareIcon,
   LegalIcon,
@@ -13,6 +14,7 @@ import {
 const icons = {
   executive: ExecutiveIcon,
   medical: HealthcareIcon,
+  dental: DentalIcon,
   social: SocialMediaIcon,
   customer: CustomerOperationsIcon,
   calendar: CalendarIcon,

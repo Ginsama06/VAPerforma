@@ -1,0 +1,12 @@
+Deploy the combined VAPerforma v17 revision
+
+Copy this folder into:
+  C:\Users\Gin\Desktop\l6\VAPerforma
+
+Then run:
+  Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue
+  npm install
+  npm run check
+  git add .
+  git commit -m "Apply complete VAPerforma client revisions"
+  git push origin main

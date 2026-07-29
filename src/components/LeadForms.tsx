@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useMemo,
   useRef,
   useState
 } from "react";
@@ -17,6 +18,13 @@ type LeadFormsProps = {
   initialService?: string;
 };
 
+function dateInputValue(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export default function LeadForms({
   initialService = ""
 }: LeadFormsProps) {
@@ -31,12 +39,43 @@ export default function LeadForms({
   const [selectedService, setSelectedService] = useState(
     normalizedInitialService
   );
+  const [discoveryDate, setDiscoveryDate] = useState("");
+  const [discoveryTime, setDiscoveryTime] = useState("");
   const [formStartedAt, setFormStartedAt] = useState(() =>
     Date.now().toString()
   );
+  const [clientTimeZone] = useState(() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+    } catch {
+      return "UTC";
+    }
+  });
   const serviceRef = useRef<HTMLSelectElement>(null);
   const statusRef = useRef<HTMLParagraphElement>(null);
 
+  const dateLimits = useMemo(() => {
+    const minimum = new Date();
+    const maximum = new Date();
+    maximum.setDate(maximum.getDate() + 90);
+
+    return {
+      min: dateInputValue(minimum),
+      max: dateInputValue(maximum)
+    };
+  }, []);
+
+  const discoveryCallStartUtc = useMemo(() => {
+    if (!discoveryDate || !discoveryTime) return "";
+
+    const localDateTime = new Date(
+      `${discoveryDate}T${discoveryTime}:00`
+    );
+
+    return Number.isNaN(localDateTime.getTime())
+      ? ""
+      : localDateTime.toISOString();
+  }, [discoveryDate, discoveryTime]);
 
   useEffect(() => {
     if (message) {
@@ -49,10 +88,16 @@ export default function LeadForms({
 
     if (status === "sending") return;
 
+    if (!discoveryCallStartUtc) {
+      setStatus("error");
+      setMessage("Please choose a valid discovery-call date and time.");
+      return;
+    }
+
     const form = event.currentTarget;
     const formData = new FormData(form);
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 20_000);
+    const timeout = window.setTimeout(() => controller.abort(), 25_000);
 
     setStatus("sending");
     setMessage("");
@@ -76,10 +121,12 @@ export default function LeadForms({
 
       form.reset();
       setSelectedService("");
+      setDiscoveryDate("");
+      setDiscoveryTime("");
       setFormStartedAt(Date.now().toString());
       setStatus("success");
       setMessage(
-        "Thank you. Your inquiry has been sent to the VAPerforma team."
+        "Your inquiry was sent and your 15-minute Discovery Call was added to the VAPerforma calendar."
       );
 
       const url = new URL(window.location.href);
@@ -111,27 +158,18 @@ export default function LeadForms({
       aria-busy={status === "sending"}
       className="form-shadow overflow-hidden rounded-[2rem] border border-[#d7ece6] bg-white p-6 sm:p-9"
     >
-      <p className="eyebrow">Client inquiry</p>
-
-      <h2 className="mt-4 text-3xl font-black tracking-[-0.035em] text-[#092b30] sm:text-4xl">
-        Tell us what support your organization needs.
-      </h2>
-
-      <p className="mt-3 max-w-2xl leading-7 text-[#587074]">
-        Share the responsibilities, schedule, tools, and experience required.
-        Your inquiry will be sent directly to the VAPerforma business email.
-      </p>
+      <p className="form-kicker">Client inquiry</p>
 
       {selectedService && (
         <div
           role="status"
-          className="mt-6 rounded-2xl border border-[#b7e4d9] bg-[#effaf6] px-4 py-3 text-sm font-bold text-[#0b7472]"
+          className="mt-5 rounded-2xl border border-[#b7e4d9] bg-[#effaf6] px-4 py-3 text-sm font-medium text-[#0b7472]"
         >
           Selected service: {selectedService}
         </div>
       )}
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2">
+      <div className="mt-6 grid gap-5 sm:grid-cols-2">
         <label className="form-label">
           Full name
           <input
@@ -256,6 +294,69 @@ export default function LeadForms({
           />
         </label>
 
+        <fieldset className="discovery-scheduler sm:col-span-2">
+          <legend className="px-2 text-lg font-medium text-[#092b30]">
+            Schedule your 15-minute Discovery Call
+          </legend>
+
+          <p className="mt-1 text-sm leading-6 text-[#587074]">
+            Choose a date and a 15-minute time slot. Times below use your
+            device timezone: <strong>{clientTimeZone}</strong>.
+          </p>
+
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            <label className="form-label">
+              Discovery Call date
+              <input
+                className="form-field mt-2"
+                name="discoveryCallDate"
+                type="date"
+                value={discoveryDate}
+                min={dateLimits.min}
+                max={dateLimits.max}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setDiscoveryDate(event.target.value)
+                }
+                required
+              />
+            </label>
+
+            <label className="form-label">
+              Discovery Call time
+              <input
+                className="form-field mt-2"
+                name="discoveryCallTime"
+                type="time"
+                value={discoveryTime}
+                step={900}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setDiscoveryTime(event.target.value)
+                }
+                required
+              />
+            </label>
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-[#b7e4d9] bg-white/80 px-4 py-3 text-sm leading-6 text-[#356164]">
+            The selected slot will be checked against the VAPerforma business
+            calendar when you submit. If another person already booked it,
+            you will be asked to choose a different time.
+          </div>
+        </fieldset>
+
+        <input
+          type="hidden"
+          name="discoveryCallStartUtc"
+          value={discoveryCallStartUtc}
+          readOnly
+        />
+        <input
+          type="hidden"
+          name="discoveryCallTimeZone"
+          value={clientTimeZone}
+          readOnly
+        />
+
         <label className="form-label sm:col-span-2">
           Responsibilities and required skills
           <textarea
@@ -324,7 +425,8 @@ export default function LeadForms({
           required
         />
         <span>
-          I agree to be contacted by VAPerforma regarding this business inquiry.
+          I agree to be contacted by VAPerforma regarding this business
+          inquiry and Discovery Call.
         </span>
       </label>
 
@@ -334,8 +436,8 @@ export default function LeadForms({
         className="brand-button mt-7 w-full rounded-2xl px-5 py-4 disabled:cursor-not-allowed disabled:opacity-65"
       >
         {status === "sending"
-          ? "Sending Inquiry..."
-          : "Submit Client Inquiry"}
+          ? "Checking Calendar..."
+          : "Submit Inquiry & Schedule Discovery Call"}
       </button>
 
       {message && (

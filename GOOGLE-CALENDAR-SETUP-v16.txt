@@ -1,0 +1,72 @@
+VAPerforma v16 — Google Calendar Setup
+
+Purpose
+-------
+Clients choose a date and a time in 15-minute increments. The website checks
+whether the VAPerforma business calendar is busy, then creates a 15-minute
+Google Calendar event automatically.
+
+Business calendar
+-----------------
+bspartners.vaperforma@gmail.com
+
+Google Cloud setup
+------------------
+1. Open Google Cloud Console and create or select a project for VAPerforma.
+2. Enable the Google Calendar API.
+3. Go to IAM & Admin > Service Accounts.
+4. Create a service account such as "VAPerforma Calendar Booker".
+5. Open the service account, create a JSON key, and download it securely.
+6. From the JSON file, use only:
+   - client_email
+   - private_key
+
+Share the business calendar
+---------------------------
+1. Sign in to Google Calendar using bspartners.vaperforma@gmail.com.
+2. Open Settings and sharing for the business calendar.
+3. Under "Share with specific people or groups", add the service account's
+   client_email address.
+4. Give it permission: "Make changes to events".
+
+Vercel environment variables
+-----------------------------
+Add these to Production, Preview, and Development as needed:
+
+GOOGLE_SERVICE_ACCOUNT_EMAIL
+  Paste the JSON client_email value.
+
+GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+  Paste the full JSON private_key value. Vercel supports multiline values.
+  Do not paste this private key into ChatGPT, GitHub, or source code.
+
+GOOGLE_CALENDAR_ID
+  bspartners.vaperforma@gmail.com
+
+BUSINESS_TIME_ZONE
+  Asia/Manila
+
+Keep the existing email variables:
+RESEND_API_KEY
+BUSINESS_EMAIL
+RESEND_FROM_EMAIL
+
+Optional limits
+---------------
+DISCOVERY_CALL_MIN_NOTICE_HOURS=2
+DISCOVERY_CALL_MAX_DAYS_AHEAD=90
+
+After adding variables
+----------------------
+Redeploy the latest GitHub commit in Vercel. Environment-variable changes only
+apply to a new deployment.
+
+How booking works
+-----------------
+- The visitor selects a date and time in their browser/device timezone.
+- The website converts it to UTC.
+- The server checks the business Google Calendar free/busy status.
+- If available, the server creates a private 15-minute event.
+- If busy, the visitor is asked to choose another slot.
+- The business inquiry email includes both the client's local time and the
+  Asia/Manila business time, plus a link to the new Google Calendar event.

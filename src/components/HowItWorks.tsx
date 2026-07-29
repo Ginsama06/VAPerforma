@@ -11,14 +11,14 @@ const icons = [CalendarIcon, MatchIcon, OnboardingIcon];
 
 export default function HowItWorks() {
   return (
-    <div className="mt-12 grid items-start gap-6 lg:grid-cols-3">
+    <div className="mt-12 grid items-stretch gap-6 lg:grid-cols-3">
       {processSteps.map((step, index) => {
         const Icon = icons[index];
 
         return (
           <details
             key={step.number}
-            className="process-card rounded-[1.8rem] border bg-white p-7"
+            className="process-card h-full rounded-[1.8rem] border bg-white p-7"
           >
             <summary className="process-summary">
               <div className="flex items-center justify-between gap-4">
@@ -64,14 +64,6 @@ export default function HowItWorks() {
                 ))}
               </ul>
 
-              <div className="mt-5 rounded-2xl border border-[#dce79a] bg-[#fbfde8] p-4">
-                <p className="text-xs font-black uppercase tracking-[0.13em] text-[#667520]">
-                  Result
-                </p>
-                <p className="mt-2 text-sm font-semibold leading-6 text-[#42501b]">
-                  {step.result}
-                </p>
-              </div>
             </div>
           </details>
         );

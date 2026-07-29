@@ -38,6 +38,9 @@ export function ExecutiveIcon(props: IconProps) {
 export function HealthcareIcon(props: IconProps) {
   return <svg {...base} {...props}><path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10Z"/><path d="M9 12h2l1-2 1 4 1-2h2"/></svg>;
 }
+export function DentalIcon(props: IconProps) {
+  return <svg {...base} {...props}><path d="M8 3.5c1.4 0 2.5.7 4 .7s2.6-.7 4-.7c2.8 0 4.5 2.2 4 5.3-.4 2.2-1.6 3.4-2.2 5.5-.7 2.5-.8 6.2-2.7 6.2-1.5 0-1.6-3.9-3.1-3.9s-1.6 3.9-3.1 3.9c-1.9 0-2-3.7-2.7-6.2-.6-2.1-1.8-3.3-2.2-5.5-.5-3.1 1.2-5.3 4-5.3Z"/></svg>;
+}
 export function SocialMediaIcon(props: IconProps) {
   return <svg {...base} {...props}><circle cx="7" cy="17" r="3"/><circle cx="17" cy="7" r="3"/><path d="M9.5 15.5 14.5 8.5M9.5 8.5l5 7"/></svg>;
 }

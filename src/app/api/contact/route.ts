@@ -1,10 +1,16 @@
 import { Resend } from "resend";
+import { reserveDiscoveryCall } from "@/lib/googleCalendar";
 import { services } from "@/data/site";
 
 export const runtime = "nodejs";
 
 const MAX_REQUEST_BYTES = 65_000;
 const MIN_FORM_COMPLETION_MS = 1_500;
+const DISCOVERY_CALL_DURATION_MS = 15 * 60 * 1000;
+const DEFAULT_MIN_NOTICE_HOURS = 2;
+const DEFAULT_MAX_DAYS_AHEAD = 90;
+const DEFAULT_BUSINESS_TIME_ZONE = "Asia/Manila";
+
 const allowedServices = new Set([
   ...services.map((service) => service.title),
   "Help me determine the right service"
@@ -38,6 +44,10 @@ type ClientInquiry = {
   arrangement?: unknown;
   startDate?: unknown;
   budget?: unknown;
+  discoveryCallDate?: unknown;
+  discoveryCallTime?: unknown;
+  discoveryCallStartUtc?: unknown;
+  discoveryCallTimeZone?: unknown;
   requirements?: unknown;
   referralSource?: unknown;
   website?: unknown;
@@ -81,6 +91,67 @@ function validRequiredDate(date: string): boolean {
 
   const parsed = new Date(`${date}T00:00:00`);
   return !Number.isNaN(parsed.getTime());
+}
+
+function validTimeZone(timeZone: string): boolean {
+  if (!timeZone || timeZone.length > 100) return false;
+
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone }).format(new Date());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function getPositiveNumber(
+  value: string | undefined,
+  fallback: number
+): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function parseDiscoveryCallStart(value: string): Date | null {
+  const parsed = new Date(value);
+
+  if (
+    !value ||
+    Number.isNaN(parsed.getTime()) ||
+    parsed.getUTCSeconds() !== 0 ||
+    parsed.getUTCMilliseconds() !== 0 ||
+    parsed.getUTCMinutes() % 15 !== 0
+  ) {
+    return null;
+  }
+
+  const minNoticeHours = getPositiveNumber(
+    process.env.DISCOVERY_CALL_MIN_NOTICE_HOURS,
+    DEFAULT_MIN_NOTICE_HOURS
+  );
+  const maxDaysAhead = getPositiveNumber(
+    process.env.DISCOVERY_CALL_MAX_DAYS_AHEAD,
+    DEFAULT_MAX_DAYS_AHEAD
+  );
+  const now = Date.now();
+  const startMs = parsed.getTime();
+
+  if (
+    startMs < now + minNoticeHours * 60 * 60 * 1000 ||
+    startMs > now + maxDaysAhead * 24 * 60 * 60 * 1000
+  ) {
+    return null;
+  }
+
+  return parsed;
+}
+
+function formatInTimeZone(date: Date, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "full",
+    timeStyle: "short",
+    timeZone
+  }).format(date);
 }
 
 function sanitizeHeader(value: string): string {
@@ -141,8 +212,6 @@ export async function POST(request: Request) {
     const formStartedAt = getText(body.formStartedAt, 30);
 
     if (honeypot || isSuspiciousTiming(formStartedAt)) {
-      // Return a neutral success response so basic bots do not learn
-      // which anti-spam check rejected the submission.
       return json({ success: true });
     }
 
@@ -154,9 +223,22 @@ export async function POST(request: Request) {
     const arrangement = getText(body.arrangement, 100);
     const startDate = getText(body.startDate, 30);
     const budget = getText(body.budget, 80);
+    const discoveryCallDate = getText(body.discoveryCallDate, 30);
+    const discoveryCallTime = getText(body.discoveryCallTime, 20);
+    const discoveryCallStartUtc = getText(
+      body.discoveryCallStartUtc,
+      50
+    );
+    const discoveryCallTimeZone = getText(
+      body.discoveryCallTimeZone,
+      100
+    );
     const requirements = getText(body.requirements, 5000);
     const referralSource = getText(body.referralSource, 100);
     const consent = getText(body.consent, 10);
+    const discoveryCallStart = parseDiscoveryCallStart(
+      discoveryCallStartUtc
+    );
 
     if (
       fullName.length < 2 ||
@@ -166,6 +248,10 @@ export async function POST(request: Request) {
       !allowedServices.has(service) ||
       !allowedArrangements.has(arrangement) ||
       !validRequiredDate(startDate) ||
+      !validRequiredDate(discoveryCallDate) ||
+      !/^\d{2}:\d{2}$/.test(discoveryCallTime) ||
+      !discoveryCallStart ||
+      !validTimeZone(discoveryCallTimeZone) ||
       !allowedReferralSources.has(referralSource) ||
       requirements.length < 20 ||
       consent !== "yes"
@@ -174,7 +260,7 @@ export async function POST(request: Request) {
         {
           success: false,
           message:
-            "Please complete all required fields with valid information."
+            "Please complete all required fields and choose a valid 15-minute Discovery Call time at least two hours from now."
         },
         400
       );
@@ -196,23 +282,91 @@ export async function POST(request: Request) {
       );
     }
 
-    const resend = new Resend(apiKey);
     const submissionId = crypto.randomUUID();
     const submittedAt = new Date().toISOString();
+    const discoveryCallEnd = new Date(
+      discoveryCallStart.getTime() + DISCOVERY_CALL_DURATION_MS
+    );
+    const businessTimeZone =
+      process.env.BUSINESS_TIME_ZONE?.trim() ||
+      DEFAULT_BUSINESS_TIME_ZONE;
+    const clientLocalTime = formatInTimeZone(
+      discoveryCallStart,
+      discoveryCallTimeZone
+    );
+    const businessLocalTime = formatInTimeZone(
+      discoveryCallStart,
+      businessTimeZone
+    );
+
+    let calendarReservation;
+
+    try {
+      calendarReservation = await reserveDiscoveryCall({
+        submissionId,
+        fullName,
+        email,
+        company,
+        phone,
+        service,
+        arrangement,
+        requirements,
+        start: discoveryCallStart,
+        end: discoveryCallEnd,
+        clientTimeZone: discoveryCallTimeZone,
+        clientLocalTime,
+        businessLocalTime
+      });
+    } catch (error) {
+      console.error(
+        "Discovery Call calendar booking failed:",
+        error instanceof Error ? error.message : "Unknown error"
+      );
+      return json(
+        {
+          success: false,
+          message:
+            "The Discovery Call calendar is temporarily unavailable. Please try again shortly."
+        },
+        502
+      );
+    }
+
+    if (!calendarReservation.success) {
+      return json(
+        {
+          success: false,
+          message:
+            "That 15-minute time slot is no longer available. Please choose another date or time."
+        },
+        409
+      );
+    }
+
+    const resend = new Resend(apiKey);
     const safeRequirements = escapeHtml(requirements).replaceAll(
       "\n",
       "<br />"
     );
+    const calendarLink = calendarReservation.eventLink;
 
     const { error } = await resend.emails.send({
       from: fromEmail,
       to: [businessEmail],
       replyTo: email,
-      subject: `New VAPerforma inquiry — ${sanitizeHeader(service)}`,
+      subject: `Discovery Call booked — ${sanitizeHeader(fullName)} — ${sanitizeHeader(service)}`,
       text: [
-        "New VAPerforma client inquiry",
+        "New VAPerforma client inquiry and Discovery Call booking",
         `Submission ID: ${submissionId}`,
         `Submitted: ${submittedAt}`,
+        `Calendar event ID: ${calendarReservation.eventId}`,
+        calendarLink ? `Calendar event: ${calendarLink}` : "",
+        "",
+        `Discovery Call duration: 15 minutes`,
+        `Client local time: ${clientLocalTime}`,
+        `Client timezone: ${discoveryCallTimeZone}`,
+        `Business local time: ${businessLocalTime}`,
+        `Business timezone: ${businessTimeZone}`,
         "",
         `Name: ${fullName}`,
         `Email: ${email}`,
@@ -226,14 +380,24 @@ export async function POST(request: Request) {
         "",
         "Responsibilities and required skills:",
         requirements
-      ].join("\n"),
+      ].filter(Boolean).join("\n"),
       html: `
         <div style="font-family:Arial,sans-serif;max-width:720px;margin:auto;color:#092b30">
           <div style="background:linear-gradient(135deg,#159b98,#72d28c,#dce45a);color:#092b30;padding:26px;border-radius:18px 18px 0 0">
             <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">VAPerforma website</p>
-            <h1 style="margin:0;font-size:25px">New client inquiry</h1>
+            <h1 style="margin:0;font-size:25px">Discovery Call booked</h1>
           </div>
           <div style="border:1px solid #d7ece6;border-top:0;padding:26px;border-radius:0 0 18px 18px">
+            <div style="background:#effaf6;border:1px solid #b7e4d9;border-radius:16px;padding:18px;margin-bottom:22px">
+              <p style="margin:0 0 7px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0b7472">15-minute Discovery Call</p>
+              <p style="margin:0;font-size:18px;font-weight:800">${escapeHtml(businessLocalTime)}</p>
+              <p style="margin:7px 0 0;color:#587074">Client time: ${escapeHtml(clientLocalTime)} (${escapeHtml(discoveryCallTimeZone)})</p>
+              ${
+                calendarLink
+                  ? `<p style="margin:13px 0 0"><a href="${escapeHtml(calendarLink)}" style="color:#0b7472;font-weight:700">Open Google Calendar event</a></p>`
+                  : ""
+              }
+            </div>
             <p style="margin-top:0;color:#587074;font-size:13px">
               Submission ID: ${escapeHtml(submissionId)}<br />
               Submitted: ${escapeHtml(submittedAt)}
@@ -254,7 +418,7 @@ export async function POST(request: Request) {
             <h2 style="margin:26px 0 10px;font-size:18px">Responsibilities and required skills</h2>
             <div style="line-height:1.75;background:#f4fbf8;border:1px solid #d7ece6;border-radius:14px;padding:18px">${safeRequirements}</div>
             <p style="margin:22px 0 0;color:#587074;font-size:13px">
-              Reply to this email to respond directly to the client.
+              The Discovery Call has already been inserted into the VAPerforma Google Calendar. Reply to this email to contact the client.
             </p>
           </div>
         </div>
@@ -267,7 +431,7 @@ export async function POST(request: Request) {
         {
           success: false,
           message:
-            "Your inquiry could not be delivered. Please try again."
+            "Your Discovery Call was scheduled, but the notification email could not be delivered. Please contact VAPerforma directly before submitting again."
         },
         502
       );

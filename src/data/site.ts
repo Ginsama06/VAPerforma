@@ -1,6 +1,7 @@
 export type ServiceIconName =
   | "executive"
   | "medical"
+  | "dental"
   | "social"
   | "customer"
   | "calendar"
@@ -70,11 +71,39 @@ export const services = [
     tasks: [
       "Insurance verification assistance",
       "Prior authorization support",
+      "Claims submission",
+      "Medical billing",
       "Patient scheduling and reminders",
       "Referral and documentation coordination",
       "Non-clinical inbox and follow-up support"
     ],
     icon: "medical"
+  },
+  {
+    slug: "dental-virtual-assistance",
+    title: "Dental Virtual Assistance",
+    shortTitle: "Dental Virtual Assistant",
+    description:
+      "Administrative support for dental practices across scheduling, insurance, claims, billing, and patient follow-up.",
+    idealFor:
+      "Dental clinics, orthodontic practices, oral surgery offices, and non-clinical dental operations teams.",
+    details:
+      "Designed for dental practices that need dependable front-office and administrative support with appointments, insurance, claims, billing coordination, treatment plans, and patient recall.",
+    outcomes: [
+      "More organized scheduling and patient follow-up",
+      "Faster claims and billing workflows",
+      "More consistent insurance and treatment-plan coordination"
+    ],
+    tasks: [
+      "Dental appointment scheduling and reminders",
+      "Insurance eligibility verification",
+      "Dental claims submission",
+      "Dental billing and payment follow-up",
+      "Treatment-plan coordination",
+      "Patient recall and follow-up",
+      "Referral and document management"
+    ],
+    icon: "dental"
   },
   {
     slug: "social-media-management",
@@ -94,9 +123,9 @@ export const services = [
     tasks: [
       "Content calendar coordination",
       "Post scheduling and publishing",
-      "Caption and basic creative support",
+      "Caption and creative support",
       "Community inbox and comment monitoring",
-      "Basic performance and engagement reports"
+      "Performance and engagement reports"
     ],
     icon: "social"
   },
@@ -168,7 +197,7 @@ export const services = [
       "Responsive layout implementation",
       "Content and design updates",
       "Content management system support",
-      "Basic maintenance and quality checks"
+      "Maintenance and quality checks"
     ],
     icon: "website"
   },
@@ -258,9 +287,7 @@ export const processSteps = [
       "Define preferred working hours and communication channels",
       "Identify required software, industry knowledge, and experience",
       "Confirm the arrangement, timeline, and onboarding priorities"
-    ],
-    result:
-      "A clear role summary that guides matching and prevents avoidable misunderstandings."
+    ]
   },
   {
     number: "02",
@@ -273,9 +300,7 @@ export const processSteps = [
       "Review experience, communication, tools, and availability",
       "Present a focused shortlist instead of an overwhelming directory",
       "Coordinate the next conversation with suitable candidates"
-    ],
-    result:
-      "A focused set of candidates aligned with the work, schedule, tools, and expectations."
+    ]
   },
   {
     number: "03",
@@ -288,9 +313,7 @@ export const processSteps = [
       "Set communication routines and escalation paths",
       "Organize tool access and process documentation",
       "Agree on early milestones and performance expectations"
-    ],
-    result:
-      "A documented working plan that helps the client and Virtual Assistant begin with confidence."
+    ]
   }
 ] as const;
 

@@ -1,0 +1,25 @@
+VAPerforma Combined v17 Revision
+
+HOME
+- Retains the simplified v17 hero.
+
+SERVICES
+- Removed the large Services headline and explanatory paragraph.
+- Enlarged "Choose the support you need" as the main section heading.
+- Added Claims Submission and Medical Billing to Medical Virtual Assistance.
+- Added Dental Virtual Assistance with a service card, modal, form option,
+  email/calendar service value, and Discovery Call link.
+- Removed the specified uses of "Basic" from Social Media Management and
+  Website Development.
+
+HOW IT WORKS
+- Removed the helper instruction.
+- Removed all Result boxes.
+- Kept cards equal-height while retaining View Details / Show Less.
+
+GET STARTED
+- Removed the left explanatory paragraph and checklist.
+- Removed the duplicate form heading and supporting paragraph.
+- Kept Client Inquiry with lighter typography.
+- Changed form labels and the Discovery Call legend to medium weight.
+- Google Calendar and Resend functionality remain unchanged.
