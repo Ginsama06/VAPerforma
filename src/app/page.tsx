@@ -42,7 +42,7 @@ export default async function HomePage({
             </h1>
 
             <p className="mt-8 max-w-4xl text-lg leading-8 text-[#587074] sm:text-xl">
-              VAPerforma connects organizations with professional support
+              VA Performa connects organizations with professional support
               across administration, healthcare operations, customer service,
               social media, scheduling, website development, video editing,
               legal administration, and data entry.
@@ -127,7 +127,7 @@ export default async function HomePage({
       >
         <div className="section-container grid items-start gap-14 lg:grid-cols-[0.88fr_1.12fr]">
           <div>
-            <p className="eyebrow eyebrow-light">Why VAPerforma</p>
+            <p className="eyebrow eyebrow-light">Why VA Performa</p>
 
             <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.05em] sm:text-5xl">
               The right support creates more room for focus, service, and
@@ -135,9 +135,10 @@ export default async function HomePage({
             </h2>
 
             <p className="mt-7 text-lg leading-9 text-[#c7ded9]">
-              We help organizations define the work, review suitable support,
-              and create a clearer path into onboarding—without forcing
-              clients to search through an overwhelming directory.
+              VA Performa delivers affordable, secure, and flexible virtual
+              staffing solutions with expertly screened professionals,
+              tailored client matching, continuous quality assurance, and
+              HIPAA-certified operations.
             </p>
 
             <a

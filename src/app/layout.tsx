@@ -7,8 +7,8 @@ import SocialRail from "@/components/SocialRail";
 
 export const metadata: Metadata = {
   title: {
-    default: "VAPerforma",
-    template: "%s | VAPerforma"
+    default: "VA Performa",
+    template: "%s | VA Performa"
   },
   description:
     "Professional virtual services across administration, medical support, social media, customer support, scheduling, web development, video editing, legal assistance, and data entry.",

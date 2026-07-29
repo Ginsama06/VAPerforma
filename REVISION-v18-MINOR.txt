@@ -1,0 +1,17 @@
+VA Performa Website v18 — Minor Revision
+
+WHY VA PERFORMA
+- Replaced the supporting paragraph with:
+
+  VA Performa delivers affordable, secure, and flexible virtual staffing
+  solutions with expertly screened professionals, tailored client matching,
+  continuous quality assurance, and HIPAA-certified operations.
+
+UNCHANGED
+- Main Why VA Performa heading
+- Interactive cards
+- Logo and animations
+- Discovery Call scheduler
+- Google Calendar integration
+- Resend inquiry email
+- All v18 services and form behavior

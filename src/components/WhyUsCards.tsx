@@ -32,7 +32,7 @@ const reasons = [
     description:
       "Request administrative, medical, customer, social media, web, video, legal, scheduling, and data-entry support.",
     details:
-      "VAPerforma supports multiple business functions, allowing an organization to request one focused service or combine related responsibilities into a customized support role.",
+      "VA Performa supports multiple business functions, allowing an organization to request one focused service or combine related responsibilities into a customized support role.",
     highlights: [
       "Nine professional service categories in one place",
       "Combine related responsibilities into one role",
@@ -175,7 +175,7 @@ export default function WhyUsCards() {
             <div className="flex items-start justify-between gap-5">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-[#dce45a]">
-                  Why VAPerforma
+                  Why VA Performa
                 </p>
 
                 <h3

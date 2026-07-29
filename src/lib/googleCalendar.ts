@@ -228,9 +228,9 @@ export async function reserveDiscoveryCall(
     {
       method: "POST",
       body: JSON.stringify({
-        summary: `VAPerforma Discovery Call — ${booking.fullName}`,
+        summary: `VA Performa Discovery Call — ${booking.fullName}`,
         description: [
-          "15-minute VAPerforma Discovery Call",
+          "15-minute VA Performa Discovery Call",
           "",
           `Submission ID: ${booking.submissionId}`,
           `Client: ${booking.fullName}`,

@@ -271,12 +271,12 @@ export async function POST(request: Request) {
     const fromEmail = process.env.RESEND_FROM_EMAIL;
 
     if (!apiKey || !businessEmail || !fromEmail) {
-      console.error("Missing VAPerforma email environment variables.");
+      console.error("Missing VA Performa email environment variables.");
       return json(
         {
           success: false,
           message:
-            "Email delivery is not configured yet. Please contact VAPerforma directly."
+            "Email delivery is not configured yet. Please contact VA Performa directly."
         },
         500
       );
@@ -356,7 +356,7 @@ export async function POST(request: Request) {
       replyTo: email,
       subject: `Discovery Call booked — ${sanitizeHeader(fullName)} — ${sanitizeHeader(service)}`,
       text: [
-        "New VAPerforma client inquiry and Discovery Call booking",
+        "New VA Performa client inquiry and Discovery Call booking",
         `Submission ID: ${submissionId}`,
         `Submitted: ${submittedAt}`,
         `Calendar event ID: ${calendarReservation.eventId}`,
@@ -384,7 +384,7 @@ export async function POST(request: Request) {
       html: `
         <div style="font-family:Arial,sans-serif;max-width:720px;margin:auto;color:#092b30">
           <div style="background:linear-gradient(135deg,#159b98,#72d28c,#dce45a);color:#092b30;padding:26px;border-radius:18px 18px 0 0">
-            <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">VAPerforma website</p>
+            <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">VA Performa website</p>
             <h1 style="margin:0;font-size:25px">Discovery Call booked</h1>
           </div>
           <div style="border:1px solid #d7ece6;border-top:0;padding:26px;border-radius:0 0 18px 18px">
@@ -418,7 +418,7 @@ export async function POST(request: Request) {
             <h2 style="margin:26px 0 10px;font-size:18px">Responsibilities and required skills</h2>
             <div style="line-height:1.75;background:#f4fbf8;border:1px solid #d7ece6;border-radius:14px;padding:18px">${safeRequirements}</div>
             <p style="margin:22px 0 0;color:#587074;font-size:13px">
-              The Discovery Call has already been inserted into the VAPerforma Google Calendar. Reply to this email to contact the client.
+              The Discovery Call has already been inserted into the VA Performa Google Calendar. Reply to this email to contact the client.
             </p>
           </div>
         </div>
@@ -431,7 +431,7 @@ export async function POST(request: Request) {
         {
           success: false,
           message:
-            "Your Discovery Call was scheduled, but the notification email could not be delivered. Please contact VAPerforma directly before submitting again."
+            "Your Discovery Call was scheduled, but the notification email could not be delivered. Please contact VA Performa directly before submitting again."
         },
         502
       );

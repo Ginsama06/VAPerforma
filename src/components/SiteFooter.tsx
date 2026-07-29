@@ -72,7 +72,7 @@ export default function SiteFooter() {
 
       <div className="border-t border-white/10">
         <div className="section-container flex flex-col gap-2 py-6 text-xs text-[#7fa9a3] sm:flex-row sm:items-center sm:justify-between">
-          <span>© {new Date().getFullYear()} VAPerforma. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} VA Performa. All rights reserved.</span>
           <span>Professional virtual services for growing organizations.</span>
         </div>
       </div>

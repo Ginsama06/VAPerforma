@@ -126,7 +126,7 @@ export default function LeadForms({
       setFormStartedAt(Date.now().toString());
       setStatus("success");
       setMessage(
-        "Your inquiry was sent and your 15-minute Discovery Call was added to the VAPerforma calendar."
+        "Your inquiry was sent and your 15-minute Discovery Call was added to the VA Performa calendar."
       );
 
       const url = new URL(window.location.href);
@@ -338,7 +338,7 @@ export default function LeadForms({
           </div>
 
           <div className="mt-4 rounded-2xl border border-[#b7e4d9] bg-white/80 px-4 py-3 text-sm leading-6 text-[#356164]">
-            The selected slot will be checked against the VAPerforma business
+            The selected slot will be checked against the VA Performa business
             calendar when you submit. If another person already booked it,
             you will be asked to choose a different time.
           </div>
@@ -370,7 +370,7 @@ export default function LeadForms({
         </label>
 
         <label className="form-label sm:col-span-2">
-          How did you hear about VAPerforma?
+          How did you hear about VA Performa?
           <select
             className="form-field mt-2"
             name="referralSource"
@@ -425,7 +425,7 @@ export default function LeadForms({
           required
         />
         <span>
-          I agree to be contacted by VAPerforma regarding this business
+          I agree to be contacted by VA Performa regarding this business
           inquiry and Discovery Call.
         </span>
       </label>
