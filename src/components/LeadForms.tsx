@@ -521,8 +521,7 @@ export default function LeadForms({
       </div>
 
       <div className="mt-5 rounded-2xl border border-[#dce79a] bg-[#fbfde8] px-4 py-3 text-sm leading-6 text-[#42501b]">
-        Do not include patient names, medical records, passwords, or other
-        confidential information in this inquiry form.
+        Please do not include confidential information in this inquiry form.
       </div>
 
       <label className="mt-5 flex items-start gap-3 text-sm leading-6 text-[#587074]">

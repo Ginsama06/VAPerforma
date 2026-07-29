@@ -1,0 +1,14 @@
+VA Performa Website v18.1.2
+
+INQUIRY FORM TEXT
+- Replaced the previous detailed warning with:
+  "Please do not include confidential information in this inquiry form."
+
+UNCHANGED
+- Optional Discovery Call
+- Global timezone selector
+- Any-minute scheduling
+- Internal Google Calendar claiming workflow
+- Resend email integration
+- Business email in the footer
+- Official transparent website logo
