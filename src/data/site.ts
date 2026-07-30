@@ -320,7 +320,7 @@ export const processSteps = [
 export const socialLinks = [
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/in/va-performa-561487425",
+    href: "https://www.linkedin.com/company/va-performa1/",
     icon: "linkedin"
   },
   {
